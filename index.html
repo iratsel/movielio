@@ -434,7 +434,7 @@
   const DEFAULT_AFFILIATE = "https://s.shopee.co.id/4LHltZIfEA";
   const DEFAULT_APIKEY = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1ODQ4NDhiODkyMWZlOGJlMjZjOTEwODczYjliMDVhOSIsIm5iZiI6MTM5MDc0NDkyMy4wLCJzdWIiOiI1MmU1MTU1YTE5YzI5NTQ1M2EwMGZkZWQiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.cv6omRfppAAoV4XRb9TdIe22Xg-3z2lrWwPUNp3nY3g";
 
-  function getApiKey(){ return localStorage.getItem('movielio_tmdb_key') || ""; }
+  function getApiKey(){ return localStorage.getItem('movielio_tmdb_key') || || DEFAULT_APIKEY; }
   function setApiKey(k){ localStorage.setItem('movielio_tmdb_key', k); }
   function getAffiliate(){ return localStorage.getItem('movielio_affiliate_link') || DEFAULT_AFFILIATE; }
   function setAffiliate(v){ localStorage.setItem('movielio_affiliate_link', v || DEFAULT_AFFILIATE); }
