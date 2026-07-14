@@ -386,7 +386,7 @@
       <span style="color:var(--text-lo); font-size:13px;">⌕</span>
       <input type="text" id="searchInput" placeholder="Cari film atau series...">
     </form>
-    <button class="icon-btn" id="settingsBtn" title="Pengaturan API Key" aria-label="Pengaturan API Key">⚙</button>
+    <!-- <button class="icon-btn" id="settingsBtn" title="Pengaturan API Key" aria-label="Pengaturan API Key">⚙</button>-->
   </nav>
 </header>
 
@@ -430,6 +430,8 @@
   const TMDB_IMG = "https://image.tmdb.org/t/p/";
   const TMDB_API = "https://api.themoviedb.org/3";
   const DEFAULT_AFFILIATE = "https://your-affiliate-link.example.com/watch";
+  const ApiKey ="eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1ODQ4NDhiODkyMWZlOGJlMjZjOTEwODczYjliMDVhOSIsIm5iZiI6MTM5MDc0NDkyMy4wLCJzdWIiOiI1MmU1MTU1YTE5YzI5NTQ1M2EwMGZkZWQiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.cv6omRfppAAoV4XRb9TdIe22Xg-3z2lrWwPUNp3nY3g";
+  const affiliateLink = "https://s.shopee.co.id/4LHltZIfEA";
 
   function getApiKey(){ return localStorage.getItem('movielio_tmdb_key') || ""; }
   function setApiKey(k){ localStorage.setItem('movielio_tmdb_key', k); }
