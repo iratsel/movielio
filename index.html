@@ -378,15 +378,16 @@
   <nav>
     <a href="#/home" class="logo"><span class="dot"></span>Movie<b>lio</b></a>
     <div class="nav-links">
-      <a href="#/home" data-nav="home">Jelajah</a>
-      <a href="#/home?type=movie" data-nav="movie">Film</a>
-      <a href="#/home?type=tv" data-nav="tv">Series</a>
+      <a href="#/home" data-nav="home" data-i18n="navBrowse">Jelajah</a>
+      <a href="#/home?type=movie" data-nav="movie" data-i18n="navMovies">Film</a>
+      <a href="#/home?type=tv" data-nav="tv" data-i18n="navSeries">Series</a>
     </div>
     <form class="search-box" id="searchForm">
       <span style="color:var(--text-lo); font-size:13px;">⌕</span>
-      <input type="text" id="searchInput" placeholder="Cari film atau series...">
+      <input type="text" id="searchInput" data-i18n-placeholder="searchPlaceholder" placeholder="Cari film atau series...">
     </form>
-    <button class="icon-btn" id="settingsBtn" title="Pengaturan API Key" aria-label="Pengaturan API Key">⚙</button>
+    <button class="icon-btn" id="langBtn" aria-label="Switch language" style="font-family:var(--font-mono); font-size:11px; font-weight:600;">ID</button>
+    <button class="icon-btn" id="settingsBtn" data-i18n-title="settingsBtnTitle" title="Pengaturan API Key" aria-label="Pengaturan API Key">⚙</button>
   </nav>
 </header>
 
@@ -395,29 +396,29 @@
 <footer>
   <div class="wrap">
     <div class="brand"><span class="dot" style="width:7px;height:7px;border-radius:50%;background:var(--amber);display:inline-block;"></span>Movielio</div>
-    <p>Movielio menampilkan data film &amp; TV series dari TMDb API untuk keperluan katalog dan review. Movielio tidak meng-hosting file video apa pun. Tautan "Tonton Film Penuh" pada halaman play mengarahkan ke situs mitra affiliate pihak ketiga.</p>
+    <p data-i18n="footerDesc">Movielio menampilkan data film &amp; TV series dari TMDb API untuk keperluan katalog dan review. Movielio tidak meng-hosting file video apa pun. Tautan "Tonton Film Penuh" pada halaman play mengarahkan ke situs mitra affiliate pihak ketiga.</p>
     <div class="foot-links">
-      <a href="#/home">Jelajah Katalog</a>
-      <a href="#/privacy">Kebijakan Privasi</a>
-      <a href="#/dmca">DMCA</a>
-      <a href="https://www.themoviedb.org/" target="_blank" rel="noopener">Didukung oleh TMDb</a>
+      <a href="#/home" data-i18n="footBrowse">Jelajah Katalog</a>
+      <a href="#/privacy" data-i18n="footPrivacy">Kebijakan Privasi</a>
+      <a href="#/dmca" data-i18n="footDmca">DMCA</a>
+      <a href="https://www.themoviedb.org/" target="_blank" rel="noopener" data-i18n="footTmdb">Didukung oleh TMDb</a>
     </div>
   </div>
 </footer>
 
 <div class="modal-overlay" id="settingsModal">
   <div class="modal">
-    <h2>Pengaturan TMDb API</h2>
-    <p>Movielio butuh kredensial TMDb untuk mengambil data film &amp; series. Terima "API Key (v3 auth)" ATAU "API Read Access Token (v4 auth)" — keduanya bisa didapat di halaman yang sama. Disimpan hanya di browser kamu sendiri (localStorage), tidak dikirim ke server manapun selain TMDb.</p>
-    <label for="apiKeyInput">TMDb API Key / Read Access Token</label>
-    <input type="text" id="apiKeyInput" placeholder="contoh: 3fd2be6f0c70a2a598f084ddfb75487c">
+    <h2 data-i18n="settingsTitle">Pengaturan TMDb API</h2>
+    <p data-i18n="settingsDesc">Movielio butuh kredensial TMDb untuk mengambil data film &amp; series. Terima "API Key (v3 auth)" ATAU "API Read Access Token (v4 auth)" — keduanya bisa didapat di halaman yang sama. Disimpan hanya di browser kamu sendiri (localStorage), tidak dikirim ke server manapun selain TMDb.</p>
+    <label for="apiKeyInput" data-i18n="apiKeyLabel">TMDb API Key / Read Access Token</label>
+    <input type="text" id="apiKeyInput" data-i18n-placeholder="apiKeyPlaceholder" placeholder="contoh: 3fd2be6f0c70a2a598f084ddfb75487c">
     <div id="apiKeyStatus" style="font-family:var(--font-mono); font-size:11px; margin:-8px 0 14px; min-height:16px;"></div>
-    <label for="affiliateLinkInput">Link Affiliate (default, opsional)</label>
-    <input type="text" id="affiliateLinkInput" placeholder="https://link-affiliate-kamu.example.com">
+    <label for="affiliateLinkInput" data-i18n="affiliateLabel">Link Affiliate (default, opsional)</label>
+    <input type="text" id="affiliateLinkInput" data-i18n-placeholder="affiliatePlaceholder" placeholder="https://link-affiliate-kamu.example.com">
     <div class="modal-actions">
-      <a class="api-link" href="https://www.themoviedb.org/settings/api" target="_blank" rel="noopener" style="margin-right:auto; align-self:center;">Dapatkan API Key →</a>
-      <button class="btn-text" id="settingsCancel">Batal</button>
-      <button class="btn-solid" id="settingsSave">Simpan &amp; Cek</button>
+      <a class="api-link" href="https://www.themoviedb.org/settings/api" target="_blank" rel="noopener" style="margin-right:auto; align-self:center;" data-i18n="getApiKeyLink">Dapatkan API Key →</a>
+      <button class="btn-text" id="settingsCancel" data-i18n="cancelBtn">Batal</button>
+      <button class="btn-solid" id="settingsSave" data-i18n="saveCheckBtn">Simpan &amp; Cek</button>
     </div>
   </div>
 </div>
@@ -426,15 +427,38 @@
 (function(){
   "use strict";
 
+  /* ================================================================
+     OWNER CONFIG — edit these before publishing. Not visitor-facing.
+     ================================================================
+
+     IMPORTANT — read this before deploying:
+     Anything written in this HTML file can always be read by any visitor
+     via "View Page Source" or the browser DevTools, no matter how it's
+     disguised (base64, splitting, etc. can all be reversed in seconds).
+     A value placed directly in TMDB_API_KEY below WILL be visible to
+     anyone who looks at your page's source or the Network tab.
+
+     To genuinely keep your TMDb key off the browser entirely, deploy the
+     included Cloudflare Worker proxy (movielio-tmdb-proxy.js) and set
+     TMDB_PROXY_URL below — the worker holds the real key server-side and
+     this page only ever talks to your worker, never to TMDb directly.
+     Leave TMDB_PROXY_URL empty to fall back to calling TMDb directly with
+     TMDB_API_KEY (fine for quick local testing, NOT for a public deploy).
+  */
+  const TMDB_PROXY_URL = "";                 // e.g. "https://movielio-proxy.yourname.workers.dev" — leave empty to call TMDb directly (key exposed)
+  const TMDB_API_KEY   = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1ODQ4NDhiODkyMWZlOGJlMjZjOTEwODczYjliMDVhOSIsIm5iZiI6MTM5MDc0NDkyMy4wLCJzdWIiOiI1MmU1MTU1YTE5YzI5NTQ1M2EwMGZkZWQiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.cv6omRfppAAoV4XRb9TdIe22Xg-3z2lrWwPUNp3nY3g"; // only used when TMDB_PROXY_URL is empty
+  const AFFILIATE_LINK = "play.html";     // destination for the "Watch Full Movie" button
+
   /* ---------------- Config ---------------- */
   const TMDB_IMG = "https://image.tmdb.org/t/p/";
-  const TMDB_API = "https://api.themoviedb.org/3";
-  const DEFAULT_AFFILIATE = "https://your-affiliate-link.example.com/watch";
+  const TMDB_API = TMDB_PROXY_URL || "https://api.themoviedb.org/3";
+  const USING_PROXY = !!TMDB_PROXY_URL;
 
-  function getApiKey(){ return localStorage.getItem('movielio_tmdb_key') || ""; }
-  function setApiKey(k){ localStorage.setItem('movielio_tmdb_key', k); }
-  function getAffiliate(){ return localStorage.getItem('movielio_affiliate_link') || DEFAULT_AFFILIATE; }
-  function setAffiliate(v){ localStorage.setItem('movielio_affiliate_link', v || DEFAULT_AFFILIATE); }
+  function getApiKey(){ return USING_PROXY ? "proxy" : TMDB_API_KEY; }
+  function getAffiliate(){ return AFFILIATE_LINK; }
+
+  function getLang(){ return localStorage.getItem('movielio_lang') || 'id'; }
+  function setLang(l){ localStorage.setItem('movielio_lang', l); }
 
   function reviewsKey(type, id){ return `movielio_reviews_${type}_${id}`; }
   function getLocalReviews(type, id){
@@ -444,6 +468,129 @@
     const list = getLocalReviews(type, id);
     list.unshift(review);
     localStorage.setItem(reviewsKey(type,id), JSON.stringify(list));
+  }
+
+  /* ---------------- i18n ---------------- */
+  const STRINGS = {
+    navBrowse: { id:'Jelajah', en:'Browse' },
+    navMovies: { id:'Film', en:'Movies' },
+    navSeries: { id:'Series', en:'Series' },
+    searchPlaceholder: { id:'Cari film atau series...', en:'Search movies or series...' },
+    settingsBtnTitle: { id:'Pengaturan API Key', en:'API Key Settings' },
+    langToggleTitle: { id:'Ganti ke Bahasa Inggris', en:'Switch to Indonesian' },
+
+    settingsTitle: { id:'Pengaturan TMDb API', en:'TMDb API Settings' },
+    settingsDesc: { id:'Movielio butuh kredensial TMDb untuk mengambil data film & series. Terima "API Key (v3 auth)" ATAU "API Read Access Token (v4 auth)" — keduanya bisa didapat di halaman yang sama. Disimpan hanya di browser kamu sendiri (localStorage), tidak dikirim ke server manapun selain TMDb.',
+      en:'Movielio needs TMDb credentials to fetch movie & series data. Either "API Key (v3 auth)" OR "API Read Access Token (v4 auth)" works — both are available on the same page. Stored only in your own browser (localStorage), never sent anywhere except directly to TMDb.' },
+    apiKeyLabel: { id:'TMDb API Key / Read Access Token', en:'TMDb API Key / Read Access Token' },
+    apiKeyPlaceholder: { id:'contoh: 3fd2be6f0c70a2a598f084ddfb75487c', en:'e.g. 3fd2be6f0c70a2a598f084ddfb75487c' },
+    affiliateLabel: { id:'Link Affiliate (default, opsional)', en:'Affiliate Link (default, optional)' },
+    affiliatePlaceholder: { id:'https://link-affiliate-kamu.example.com', en:'https://your-affiliate-link.example.com' },
+    getApiKeyLink: { id:'Dapatkan API Key →', en:'Get API Key →' },
+    cancelBtn: { id:'Batal', en:'Cancel' },
+    saveCheckBtn: { id:'Simpan & Cek', en:'Save & Check' },
+    checkingBtn: { id:'Memeriksa...', en:'Checking...' },
+    fillKeyFirst: { id:'Isi API Key atau Read Access Token terlebih dahulu.', en:'Please enter an API Key or Read Access Token first.' },
+    checkingMsg: { id:'Menghubungi TMDb untuk memverifikasi key...', en:'Contacting TMDb to verify the key...' },
+    keyValidMsg: { id:'Key valid ✓ Tersimpan.', en:'Key valid ✓ Saved.' },
+    keyRejectedPrefix: { id:'Key ditolak TMDb:', en:'Key rejected by TMDb:' },
+    keyNetworkErrorMsg: { id:'Gagal terhubung ke TMDb (cek koneksi internet / ad-blocker).', en:'Could not connect to TMDb (check your internet connection / ad-blocker).' },
+
+    noKeyTitle: { id:'TMDb API Key belum diatur', en:'TMDb API Key not set yet' },
+    noKeyDesc: { id:'Klik ikon ⚙ di kanan atas untuk memasukkan TMDb API Key kamu. Data film & series diambil langsung dari TMDb, jadi key wajib diisi dulu.',
+      en:'Click the ⚙ icon in the top right to enter your TMDb API Key. Movie & series data is fetched directly from TMDb, so a key is required first.' },
+    openSettingsBtn: { id:'Buka Pengaturan', en:'Open Settings' },
+
+    trendingEyebrow: { id:'Trending', en:'Trending' },
+    railMovieThisMonth: { id:'Film Populer Bulan Ini', en:'Popular Movies This Month' },
+    railMovieLastMonth: { id:'Film Populer Bulan Lalu', en:'Popular Movies Last Month' },
+    railTvThisMonth: { id:'Series Terpopuler Bulan Ini', en:'Popular Series This Month' },
+    railTvLastMonth: { id:'Series Terpopuler Bulan Lalu', en:'Popular Series Last Month' },
+    catalogEyebrow: { id:'Katalog', en:'Catalog' },
+    homeTitle: { id:'Jelajahi Film & TV Series', en:'Explore Movies & TV Series' },
+    homeSub: { id:'Data lengkap dari TMDb — urutkan dari rilis terlama hingga yang paling baru, atau sebaliknya.',
+      en:'Full data from TMDb — sort from oldest to newest release, or the other way around.' },
+    filterMovies: { id:'Film', en:'Movies' },
+    filterSeries: { id:'Series', en:'Series' },
+    sortNewOld: { id:'Terbaru → Terlama', en:'Newest → Oldest' },
+    sortOldNew: { id:'Terlama → Terbaru', en:'Oldest → Newest' },
+    loadMoreBtn: { id:'Muat Lebih Banyak', en:'Load More' },
+    allLoadedBtn: { id:'Semua judul sudah dimuat', en:'All titles loaded' },
+    loadingBtn: { id:'Memuat...', en:'Loading...' },
+    resultsFoundSuffix: { id:'judul ditemukan', en:'titles found' },
+    noResults: { id:'Tidak ada hasil ditemukan.', en:'No results found.' },
+    noDataPeriod: { id:'Tidak ada data untuk periode ini.', en:'No data for this period.' },
+    railFailMovie: { id:'Gagal memuat film', en:'Failed to load movies' },
+    railFailSeries: { id:'Gagal memuat series', en:'Failed to load series' },
+    thisMonthSuffix: { id:'bulan ini', en:'this month' },
+    lastMonthSuffix: { id:'bulan lalu', en:'last month' },
+    apiKeyInvalidGrid: { id:'API Key ditolak TMDb', en:'API Key rejected by TMDb' },
+    apiKeyInvalidHint: { id:'Buka menu ⚙ Pengaturan dan periksa lagi — pastikan kamu menyalin "API Key (v3 auth)" atau "API Read Access Token (v4 auth)" secara utuh, tanpa spasi tambahan.',
+      en:'Open the ⚙ Settings menu and check again — make sure you copied the full "API Key (v3 auth)" or "API Read Access Token (v4 auth)" without extra spaces.' },
+    notFoundMsg: { id:'Data tidak ditemukan di TMDb', en:'Data not found on TMDb' },
+    rateLimitMsg: { id:'Terlalu banyak permintaan ke TMDb dalam waktu singkat. Coba lagi sebentar lagi.', en:'Too many requests to TMDb in a short time. Please try again shortly.' },
+    networkErrorMsg: { id:'Gagal terhubung ke TMDb. Ini biasanya karena koneksi internet terputus, atau ada ad-blocker/ekstensi browser yang memblokir permintaan ke api.themoviedb.org — coba nonaktifkan sementara lalu muat ulang halaman.',
+      en:'Could not connect to TMDb. This is usually caused by a dropped internet connection, or a browser ad-blocker/extension blocking requests to api.themoviedb.org — try disabling it temporarily and reload the page.' },
+    genericErrorMsg: { id:'Terjadi kesalahan saat mengambil data dari TMDb.', en:'Something went wrong while fetching data from TMDb.' },
+
+    typeMovie: { id:'Film', en:'Movie' },
+    typeSeries: { id:'TV Series', en:'TV Series' },
+    ratingLabel: { id:'Rating', en:'Rating' },
+    releaseLabel: { id:'Rilis', en:'Release' },
+    durationLabel: { id:'Durasi', en:'Duration' },
+    minutesSuffix: { id:'menit', en:'min' },
+    minutesPerEpSuffix: { id:'menit/eps', en:'min/ep' },
+    voterLabel: { id:'Voter', en:'Votes' },
+    watchNowBtn: { id:'▶ Tonton Sekarang', en:'▶ Watch Now' },
+    overviewTitle: { id:'Sinopsis', en:'Overview' },
+    overviewEmpty: { id:'Sinopsis belum tersedia untuk judul ini.', en:'No overview available for this title yet.' },
+    castTitle: { id:'Pemeran', en:'Cast' },
+    castEmpty: { id:'Data pemeran tidak tersedia.', en:'Cast data is not available.' },
+    reviewTitle: { id:'Review', en:'Reviews' },
+    reviewFormTitle: { id:'Tulis Review Kamu', en:'Write Your Review' },
+    reviewNamePlaceholder: { id:'Nama kamu', en:'Your name' },
+    submitReviewBtn: { id:'Kirim Review', en:'Submit Review' },
+    reviewEmptyAlert: { id:'Tulis review terlebih dahulu ya.', en:'Please write a review first.' },
+    reviewEmptyMsg: { id:'Belum ada review untuk judul ini. Jadilah yang pertama menulis!', en:'No reviews yet for this title. Be the first to write one!' },
+    reviewBadgeUser: { id:'Review Pengguna', en:'User Review' },
+    sideStatus: { id:'Status', en:'Status' },
+    sideOriginalLang: { id:'Bahasa Asli', en:'Original Language' },
+    sideSeasons: { id:'Jumlah Season', en:'Number of Seasons' },
+    sideEpisodes: { id:'Jumlah Episode', en:'Number of Episodes' },
+    sideProduction: { id:'Produksi', en:'Production' },
+    sideBudget: { id:'Budget', en:'Budget' },
+    anonymous: { id:'Anonim', en:'Anonymous' },
+
+    playHintTrailer: { id:'Klik untuk memutar video pembuka', en:'Click to play the opening video' },
+    playHintNoTrailer: { id:'Video pembuka tidak tersedia — lanjut ke mitra tayang', en:'Opening video not available — continue to our partner' },
+    affiliateNote: { id:'Video pembuka telah selesai. Movielio tidak menyediakan streaming film penuh — klik tombol di bawah untuk melanjutkan ke mitra tayang pihak ketiga.',
+      en:'The opening video has finished. Movielio does not provide full movie streaming — click the button below to continue to a third-party viewing partner.' },
+    watchFullBtn: { id:'▶ Tonton Film Penuh di Mitra Kami', en:'▶ Watch Full Movie at Our Partner' },
+    backToDetail: { id:'Kembali ke halaman detail', en:'Back to detail page' },
+    fileProtocolWarning: { id:'⚠ Halaman ini dibuka langsung dari file (file://). YouTube menolak memutar video pada mode ini (Error 153). Jalankan lewat local server (mis. python3 -m http.server lalu buka http://localhost:8000) atau upload ke hosting agar video pembuka bisa diputar.',
+      en:'⚠ This page was opened directly from a file (file://). YouTube refuses to play video in this mode (Error 153). Run it through a local server (e.g. python3 -m http.server, then open http://localhost:8000) or upload it to hosting so the opening video can play.' },
+    ytErrorTitle: { id:'Video pembuka tidak bisa diputar', en:"Opening video couldn't be played" },
+    ytErrorNote: { id:'Error {code} dari YouTube: halaman ini dibuka langsung dari file (file://), sementara YouTube mewajibkan halaman disajikan lewat server web (http:// atau https://) agar video bisa di-embed. Jalankan file ini lewat local server (mis. python3 -m http.server, Live Server di VS Code, atau upload ke hosting) lalu buka lagi via http://.',
+      en:'Error {code} from YouTube: this page was opened directly from a file (file://), while YouTube requires the page to be served over the web (http:// or https://) for the video to embed. Run this file through a local server (e.g. python3 -m http.server, VS Code Live Server, or upload to hosting) then open it again via http://.' },
+
+    footerDesc: { id:'Movielio menampilkan data film & TV series dari TMDb API untuk keperluan katalog dan review. Movielio tidak meng-hosting file video apa pun. Tautan "Tonton Film Penuh" pada halaman play mengarahkan ke situs mitra affiliate pihak ketiga.',
+      en:'Movielio displays movie & TV series data from the TMDb API for catalog and review purposes. Movielio does not host any video files. The "Watch Full Movie" link on the play page leads to a third-party affiliate partner site.' },
+    footBrowse: { id:'Jelajah Katalog', en:'Browse Catalog' },
+    footPrivacy: { id:'Kebijakan Privasi', en:'Privacy Policy' },
+    footDmca: { id:'DMCA', en:'DMCA' },
+    footTmdb: { id:'Didukung oleh TMDb', en:'Powered by TMDb' },
+
+    legalEyebrow: { id:'Legal', en:'Legal' },
+    privacyTitle: { id:'Kebijakan Privasi', en:'Privacy Policy' },
+    dmcaTitle: { id:'Kebijakan DMCA', en:'DMCA Policy' }
+  };
+
+  function t(key, vars){
+    const entry = STRINGS[key];
+    if(!entry){ console.warn('Movielio: missing translation for', key); return key; }
+    let str = entry[getLang()] || entry.id || key;
+    if(vars){ Object.entries(vars).forEach(([k,v]) => { str = str.replace(`{${k}}`, v); }); }
+    return str;
   }
 
   /* ---------------- API helpers ---------------- */
@@ -459,7 +606,7 @@
     const key = getApiKey();
     if(!key){ throw new Error("NO_API_KEY"); }
     const url = new URL(TMDB_API + path);
-    url.searchParams.set('language', 'id-ID');
+    url.searchParams.set('language', getLang() === 'en' ? 'en-US' : 'id-ID');
     Object.entries(params||{}).forEach(([k,v]) => url.searchParams.set(k, v));
 
     const useBearer = isV4Token(key);
@@ -575,7 +722,27 @@
   }
 
   function renderPrivacyPage(){
-    app.innerHTML = legalPageShell('Legal', 'Kebijakan Privasi', `
+    const body = getLang() === 'en' ? `
+      <p>Movielio respects visitor privacy. This page explains what data is processed while you use this site.</p>
+
+      <h2>Data from TMDb</h2>
+      <p>The movie/series catalog, images, synopses, and reviews shown are fetched directly from The Movie Database (TMDb) API through your own browser. Movielio does not store a copy of that data on any server, because Movielio has no backend server — the entire site runs client-side (in your browser).</p>
+
+      <h2>API Credentials</h2>
+      <p>The TMDb API Key or Read Access Token you enter is stored only in your own browser's <code>localStorage</code>. This credential is never sent anywhere except directly to TMDb's official servers when fetching data.</p>
+
+      <h2>User Reviews</h2>
+      <p>Reviews you write via the form on the detail page are stored locally in your browser's <code>localStorage</code>, and are only visible on the device &amp; browser where they were written. These reviews are never sent to any Movielio server.</p>
+
+      <h2>Cookies &amp; Local Storage</h2>
+      <p>Movielio uses <code>localStorage</code> (not tracking cookies) to store technical preferences such as your API key, affiliate link, and local reviews. You can clear this data anytime via your browser settings.</p>
+
+      <h2>Links &amp; Third-Party Partners</h2>
+      <p>The play page contains links to third-party affiliate partners. Movielio is not responsible for the privacy policies of those partner sites — please review each site's own privacy policy after being redirected there.</p>
+
+      <h2>Policy Changes</h2>
+      <p>This policy may be updated from time to time. Changes take effect as soon as this page is republished.</p>
+    ` : `
       <p>Movielio menghargai privasi pengunjung. Halaman ini menjelaskan data apa saja yang diproses saat kamu menggunakan situs ini.</p>
 
       <h2>Data dari TMDb</h2>
@@ -595,11 +762,25 @@
 
       <h2>Perubahan Kebijakan</h2>
       <p>Kebijakan ini dapat diperbarui sewaktu-waktu. Perubahan akan langsung berlaku begitu halaman ini dipublikasikan ulang.</p>
-    `);
+    `;
+    app.innerHTML = legalPageShell(t('legalEyebrow'), t('privacyTitle'), body);
   }
 
   function renderDmcaPage(){
-    app.innerHTML = legalPageShell('Legal', 'Kebijakan DMCA', `
+    const body = getLang() === 'en' ? `
+      <p>Movielio is a catalog and directory site for movie &amp; TV series information. Movielio does not host, store, or provide streaming of any movie/series video files on its own servers.</p>
+
+      <h2>Content Sources</h2>
+      <p>Title data, posters, synopses, and opening videos shown are sourced from the TMDb API and third-party video platforms (e.g. YouTube) for official trailers/teasers. The "Watch Full Movie" link on the play page directs visitors to a third-party affiliate partner site outside Movielio's control.</p>
+
+      <h2>DMCA Complaint Procedure</h2>
+      <p>If you are a copyright holder or authorized representative who believes content on a partner site linked from Movielio infringes copyright, please contact that partner directly, as Movielio does not host that content. For complaints about metadata (titles, poster images, synopses) displayed from TMDb, please contact TMDb through their official channels.</p>
+
+      <h2>Contact Information</h2>
+      <p>For questions regarding content displayed directly by Movielio (not belonging to third-party partners), please contact us via the email listed in this site's contact section.</p>
+
+      <p style="color:var(--text-lo); font-size:0.8rem; margin-top:30px;">Note: this text is a generic DMCA policy template. Adjust it with your own legal details, address, and official email address before publishing.</p>
+    ` : `
       <p>Movielio adalah situs katalog dan direktori informasi film &amp; TV series. Movielio tidak meng-hosting, menyimpan, atau menyediakan streaming file video film/series apa pun di server miliknya sendiri.</p>
 
       <h2>Sumber Konten</h2>
@@ -612,7 +793,8 @@
       <p>Untuk pertanyaan terkait konten yang ditampilkan langsung oleh Movielio (bukan milik mitra pihak ketiga), silakan hubungi kami melalui email yang tercantum di bagian kontak situs ini.</p>
 
       <p style="color:var(--text-lo); font-size:0.8rem; margin-top:30px;">Catatan: teks ini adalah kerangka umum kebijakan DMCA. Sesuaikan dengan detail hukum, alamat, dan alamat email resmi milikmu sebelum dipublikasikan.</p>
-    `);
+    `;
+    app.innerHTML = legalPageShell(t('legalEyebrow'), t('dmcaTitle'), body);
   }
 
   function updateActiveNav(type){
@@ -626,9 +808,9 @@
     app.innerHTML = `
       <div class="page-top wrap">
         <div class="status-msg" style="padding:100px 20px;">
-          <p style="font-size:15px; color:var(--text-hi); margin-bottom:10px; font-family:var(--font-display); letter-spacing:0.02em; text-transform:none;">TMDb API Key belum diatur</p>
-          <p style="max-width:420px; margin:0 auto 20px; line-height:1.7;">Klik ikon ⚙ di kanan atas untuk memasukkan TMDb API Key kamu. Data film &amp; series diambil langsung dari TMDb, jadi key wajib diisi dulu.</p>
-          <button class="btn-solid" onclick="document.getElementById('settingsBtn').click()">Buka Pengaturan</button>
+          <p style="font-size:15px; color:var(--text-hi); margin-bottom:10px; font-family:var(--font-display); letter-spacing:0.02em; text-transform:none;">${t('noKeyTitle')}</p>
+          <p style="max-width:420px; margin:0 auto 20px; line-height:1.7;">${t('noKeyDesc')}</p>
+          <button class="btn-solid" onclick="document.getElementById('settingsBtn').click()">${t('openSettingsBtn')}</button>
         </div>
       </div>`;
   }
@@ -636,7 +818,7 @@
   /* ---------------- Home / Browse ---------------- */
   let state = {
     type: 'movie',      // movie | tv
-    sort: 'asc',        // asc (terlama) | desc (terbaru)
+    sort: 'desc',        // asc (terlama/oldest) | desc (terbaru/newest) — default: newest first
     page: 1,
     query: '',
     results: [],
@@ -652,41 +834,41 @@
     document.getElementById('searchInput').value = '';
 
     app.innerHTML = `
-      <div class="page-top wrap">
-        <p class="eyebrow"><span class="dash"></span>Trending<span class="dash"></span></p>
-        <h2 class="rail-title">Film Populer Bulan Ini</h2>
+      <div class="page-top wrap" id="popularRailsSection" style="${state.query ? 'display:none;' : ''}">
+        <p class="eyebrow"><span class="dash"></span>${t('trendingEyebrow')}<span class="dash"></span></p>
+        <h2 class="rail-title">${t('railMovieThisMonth')}</h2>
         <div class="popular-rail" id="movieThisMonthRail"></div>
 
-        <h2 class="rail-title">Film Populer Bulan Lalu</h2>
+        <h2 class="rail-title">${t('railMovieLastMonth')}</h2>
         <div class="popular-rail" id="movieLastMonthRail"></div>
 
-        <h2 class="rail-title">Series Terpopuler Bulan Ini</h2>
+        <h2 class="rail-title">${t('railTvThisMonth')}</h2>
         <div class="popular-rail" id="tvThisMonthRail"></div>
 
-        <h2 class="rail-title">Series Terpopuler Bulan Lalu</h2>
+        <h2 class="rail-title">${t('railTvLastMonth')}</h2>
         <div class="popular-rail" id="tvLastMonthRail"></div>
       </div>
 
       <div class="wrap">
-        <p class="eyebrow"><span class="dash"></span>Katalog<span class="dash"></span></p>
-        <h1 class="page-title">Jelajahi Film &amp; TV Series</h1>
-        <p class="page-sub">Data lengkap dari TMDb — urutkan dari rilis terlama hingga yang paling baru, atau sebaliknya.</p>
+        <p class="eyebrow"><span class="dash"></span>${t('catalogEyebrow')}<span class="dash"></span></p>
+        <h1 class="page-title">${t('homeTitle')}</h1>
+        <p class="page-sub">${t('homeSub')}</p>
 
         <div class="filter-bar">
           <div class="seg" id="typeSeg">
-            <button data-val="movie" class="${state.type==='movie'?'active':''}">Film</button>
-            <button data-val="tv" class="${state.type==='tv'?'active':''}">Series</button>
+            <button data-val="movie" class="${state.type==='movie'?'active':''}">${t('filterMovies')}</button>
+            <button data-val="tv" class="${state.type==='tv'?'active':''}">${t('filterSeries')}</button>
           </div>
           <select id="sortSelect">
-            <option value="asc" ${state.sort==='asc'?'selected':''}>Terlama → Terbaru</option>
-            <option value="desc" ${state.sort==='desc'?'selected':''}>Terbaru → Terlama</option>
+            <option value="desc" ${state.sort==='desc'?'selected':''}>${t('sortNewOld')}</option>
+            <option value="asc" ${state.sort==='asc'?'selected':''}>${t('sortOldNew')}</option>
           </select>
           <div class="spacer"></div>
           <div class="result-count" id="resultCount"></div>
         </div>
 
         <div class="grid" id="grid"></div>
-        <div class="load-more-wrap"><button class="btn-outline" id="loadMoreBtn">Muat Lebih Banyak</button></div>
+        <div class="load-more-wrap"><button class="btn-outline" id="loadMoreBtn">${t('loadMoreBtn')}</button></div>
       </div>
     `;
 
@@ -702,12 +884,13 @@
       state.page += 1; loadResults(false);
     });
 
-    renderMonthRails('movie', 'movieThisMonthRail', 'movieLastMonthRail', 'primary_release_date');
-    renderMonthRails('tv', 'tvThisMonthRail', 'tvLastMonthRail', 'first_air_date');
+    if(!state.query){
+      renderMonthRails('movie', 'movieThisMonthRail', 'movieLastMonthRail', 'primary_release_date');
+      renderMonthRails('tv', 'tvThisMonthRail', 'tvLastMonthRail', 'first_air_date');
+    }
     renderSkeletons();
     await loadResults(true);
   }
-
   function renderRailSkeleton(rail){
     rail.innerHTML = Array.from({length:8}).map(() => `
       <div class="pop-card">
@@ -718,7 +901,7 @@
 
   function renderRailItems(rail, items, type){
     rail.innerHTML = items.map((item, i) => {
-      const title = item.title || item.name || 'Tanpa judul';
+      const title = item.title || item.name || (getLang()==='en' ? 'Untitled' : 'Tanpa judul');
       const poster = imgUrl(item.poster_path, 'w342');
       const rating = item.vote_average ? item.vote_average.toFixed(1) : '—';
       const date = item.release_date || item.first_air_date || '';
@@ -737,7 +920,7 @@
             <div class="year">${year}</div>
           </div>
         </div>`;
-    }).join('') || `<div class="status-msg" style="padding:30px 0;">Tidak ada data untuk periode ini.</div>`;
+    }).join('') || `<div class="status-msg" style="padding:30px 0;">${t('noDataPeriod')}</div>`;
     rail.querySelectorAll('.pop-card').forEach(el => {
       el.addEventListener('click', () => { location.hash = `#/detail/${type}/${el.dataset.id}`; });
     });
@@ -769,13 +952,13 @@
       return (data.results || []).slice(0, 12);
     };
 
-    const label = type === 'movie' ? 'film' : 'series';
+    const failLabel = type === 'movie' ? t('railFailMovie') : t('railFailSeries');
 
     try{
       const items = await fetchWindow(thisMonthStart, thisMonthEnd);
       if(thisRail) renderRailItems(thisRail, items, type);
     }catch(err){
-      if(thisRail) thisRail.innerHTML = `<div class="status-msg" style="padding:30px 0;">Gagal memuat ${label} bulan ini.</div>`;
+      if(thisRail) thisRail.innerHTML = `<div class="status-msg" style="padding:30px 0;">${failLabel} ${t('thisMonthSuffix')}.</div>`;
       console.error(`Movielio ${type} this-month rail error:`, err);
     }
 
@@ -783,7 +966,7 @@
       const items = await fetchWindow(lastMonthStart, lastMonthEnd);
       if(lastRail) renderRailItems(lastRail, items, type);
     }catch(err){
-      if(lastRail) lastRail.innerHTML = `<div class="status-msg" style="padding:30px 0;">Gagal memuat ${label} bulan lalu.</div>`;
+      if(lastRail) lastRail.innerHTML = `<div class="status-msg" style="padding:30px 0;">${failLabel} ${t('lastMonthSuffix')}.</div>`;
       console.error(`Movielio ${type} last-month rail error:`, err);
     }
   }
@@ -802,7 +985,7 @@
     const grid = document.getElementById('grid');
     const loadMoreBtn = document.getElementById('loadMoreBtn');
     if(!grid) return;
-    if(loadMoreBtn){ loadMoreBtn.disabled = true; loadMoreBtn.textContent = 'Memuat...'; }
+    if(loadMoreBtn){ loadMoreBtn.disabled = true; loadMoreBtn.textContent = t('loadingBtn'); }
     if(replace) renderSkeletons();
 
     try{
@@ -822,8 +1005,8 @@
       const items = (data.results || []).filter(it => it.poster_path || it.title || it.name);
       state.results = replace ? items : state.results.concat(items);
 
-      grid.innerHTML = state.results.map(renderCard).join('') || `<div class="status-msg">Tidak ada hasil ditemukan.</div>`;
-      document.getElementById('resultCount').textContent = `${data.total_results ?? state.results.length} judul ditemukan`;
+      grid.innerHTML = state.results.map(renderCard).join('') || `<div class="status-msg">${t('noResults')}</div>`;
+      document.getElementById('resultCount').textContent = `${data.total_results ?? state.results.length} ${t('resultsFoundSuffix')}`;
       grid.querySelectorAll('.card').forEach(el => {
         el.addEventListener('click', () => {
           location.hash = `#/detail/${state.type}/${el.dataset.id}`;
@@ -832,7 +1015,7 @@
 
       if(loadMoreBtn){
         loadMoreBtn.disabled = state.page >= state.totalPages;
-        loadMoreBtn.textContent = state.page >= state.totalPages ? 'Semua judul sudah dimuat' : 'Muat Lebih Banyak';
+        loadMoreBtn.textContent = state.page >= state.totalPages ? t('allLoadedBtn') : t('loadMoreBtn');
       }
     }catch(err){
       handleApiError(err, grid);
@@ -840,7 +1023,7 @@
   }
 
   function renderCard(item){
-    const title = item.title || item.name || 'Tanpa judul';
+    const title = item.title || item.name || (getLang()==='en' ? 'Untitled' : 'Tanpa judul');
     const date = item.release_date || item.first_air_date || '';
     const year = date ? date.slice(0,4) : '—';
     const rating = item.vote_average ? item.vote_average.toFixed(1) : '—';
@@ -851,7 +1034,7 @@
           ${poster ? `<img src="${poster}" alt="Poster ${escapeHtml(title)}" loading="lazy">` : `<div class="placeholder-poster">${escapeHtml(title)}</div>`}
           <div class="scan"></div>
           <div class="hud-frame"></div>
-          <div class="type-chip">${state.type === 'movie' ? 'Film' : 'Series'}</div>
+          <div class="type-chip">${state.type === 'movie' ? t('filterMovies') : t('filterSeries')}</div>
           <div class="rating-chip">★ ${rating}</div>
         </div>
         <div class="meta">
@@ -868,17 +1051,17 @@
   function handleApiError(err, targetEl){
     if(String(err.message) === 'NO_API_KEY') { renderNoApiKey(); return; }
 
-    let msg = 'Terjadi kesalahan saat mengambil data dari TMDb.';
+    let msg = t('genericErrorMsg');
     let detail = err.detail ? ` (${escapeHtml(err.detail)})` : '';
 
     if(String(err.message).includes('401')){
-      msg = `API Key ditolak TMDb${detail}. Buka menu ⚙ Pengaturan dan periksa lagi — pastikan kamu menyalin "API Key (v3 auth)" atau "API Read Access Token (v4 auth)" secara utuh, tanpa spasi tambahan.`;
+      msg = `${t('apiKeyInvalidGrid')}${detail}. ${t('apiKeyInvalidHint')}`;
     } else if(String(err.message).includes('404')){
-      msg = `Data tidak ditemukan di TMDb${detail}.`;
+      msg = `${t('notFoundMsg')}${detail}.`;
     } else if(String(err.message).includes('429')){
-      msg = 'Terlalu banyak permintaan ke TMDb dalam waktu singkat. Coba lagi sebentar lagi.';
+      msg = t('rateLimitMsg');
     } else if(String(err.message) === 'NETWORK_ERROR'){
-      msg = 'Gagal terhubung ke TMDb. Ini biasanya karena koneksi internet terputus, atau ada ad-blocker/ekstensi browser yang memblokir permintaan ke api.themoviedb.org — coba nonaktifkan sementara lalu muat ulang halaman.';
+      msg = t('networkErrorMsg');
     } else if(detail){
       msg += detail;
     }
@@ -893,13 +1076,15 @@
     const q = document.getElementById('searchInput').value.trim();
     if(!q) return;
     state.query = q; state.page = 1; state.results = [];
+    const railsSection = document.getElementById('popularRailsSection');
+    if(railsSection) railsSection.style.display = 'none';
     if(!location.hash.startsWith('#/home')) location.hash = '#/home';
     loadResults(true);
   });
 
   /* ---------------- Detail page ---------------- */
   async function renderDetail(type, id){
-    app.innerHTML = `<div class="status-msg" style="padding-top:180px;">Memuat detail...</div>`;
+    app.innerHTML = `<div class="status-msg" style="padding-top:180px;">${t('loadingBtn')}</div>`;
     try{
       const [details, credits, reviews, videos] = await Promise.all([
         tmdb(`/${type}/${id}`, {}),
@@ -912,8 +1097,8 @@
       const date = details.release_date || details.first_air_date || '';
       const year = date ? date.slice(0,4) : '—';
       const runtime = type === 'movie'
-        ? (details.runtime ? `${details.runtime} menit` : '—')
-        : (details.episode_run_time && details.episode_run_time[0] ? `${details.episode_run_time[0]} menit/eps` : '—');
+        ? (details.runtime ? `${details.runtime} ${t('minutesSuffix')}` : '—')
+        : (details.episode_run_time && details.episode_run_time[0] ? `${details.episode_run_time[0]} ${t('minutesPerEpSuffix')}` : '—');
       const backdrop = imgUrl(details.backdrop_path, 'w1280');
       const poster = imgUrl(details.poster_path, 'w500');
 
@@ -923,18 +1108,18 @@
           <div class="wrap hero-inner">
             <div class="detail-poster">${poster ? `<img src="${poster}" alt="Poster ${escapeHtml(title)}">` : ''}</div>
             <div class="detail-head">
-              <div class="type-tag"><span class="dash" style="width:20px;height:1px;background:var(--amber-dim);display:inline-block;"></span>${type==='movie'?'Film':'TV Series'} · ${year}</div>
+              <div class="type-tag"><span class="dash" style="width:20px;height:1px;background:var(--amber-dim);display:inline-block;"></span>${type==='movie'?t('typeMovie'):t('typeSeries')} · ${year}</div>
               <h1>${escapeHtml(title)}</h1>
               ${details.tagline ? `<div class="tagline">"${escapeHtml(details.tagline)}"</div>` : ''}
               <div class="detail-stats">
-                <div class="stat-box"><div class="val rating">★ ${details.vote_average ? details.vote_average.toFixed(1) : '—'}</div><div class="lbl">Rating</div></div>
-                <div class="stat-box"><div class="val">${year}</div><div class="lbl">Rilis</div></div>
-                <div class="stat-box"><div class="val">${runtime}</div><div class="lbl">Durasi</div></div>
-                <div class="stat-box"><div class="val">${details.vote_count ?? 0}</div><div class="lbl">Voter</div></div>
+                <div class="stat-box"><div class="val rating">★ ${details.vote_average ? details.vote_average.toFixed(1) : '—'}</div><div class="lbl">${t('ratingLabel')}</div></div>
+                <div class="stat-box"><div class="val">${year}</div><div class="lbl">${t('releaseLabel')}</div></div>
+                <div class="stat-box"><div class="val">${runtime}</div><div class="lbl">${t('durationLabel')}</div></div>
+                <div class="stat-box"><div class="val">${details.vote_count ?? 0}</div><div class="lbl">${t('voterLabel')}</div></div>
               </div>
               <div class="genre-row">${(details.genres||[]).map(g => `<span class="genre-chip">${escapeHtml(g.name)}</span>`).join('')}</div>
               <div class="hero-cta">
-                <a class="btn-play" href="#/play/${type}/${id}">▶ Tonton Sekarang</a>
+                <a class="btn-play" href="#/play/${type}/${id}">${t('watchNowBtn')}</a>
               </div>
             </div>
           </div>
@@ -943,40 +1128,40 @@
         <div class="wrap detail-body">
           <div class="detail-grid">
             <div>
-              <div class="block-title">Sinopsis</div>
-              <p class="overview-text">${escapeHtml(details.overview || 'Sinopsis belum tersedia untuk judul ini.')}</p>
+              <div class="block-title">${t('overviewTitle')}</div>
+              <p class="overview-text">${escapeHtml(details.overview || t('overviewEmpty'))}</p>
 
-              <div class="block-title">Pemeran</div>
+              <div class="block-title">${t('castTitle')}</div>
               <div class="cast-row">
                 ${(credits.cast||[]).slice(0,12).map(c => `
                   <div class="cast-item">
                     <div class="ph">${c.profile_path ? `<img src="${imgUrl(c.profile_path,'w185')}" alt="${escapeHtml(c.name)}">` : ''}</div>
                     <div class="nm">${escapeHtml(c.name)}</div>
                     <div class="rl">${escapeHtml(c.character || '')}</div>
-                  </div>`).join('') || '<p class="overview-text">Data pemeran tidak tersedia.</p>'}
+                  </div>`).join('') || `<p class="overview-text">${t('castEmpty')}</p>`}
               </div>
 
-              <div class="block-title" id="reviewsTitle">Review</div>
+              <div class="block-title" id="reviewsTitle">${t('reviewTitle')}</div>
               <div id="reviewList"></div>
 
               <div class="review-form">
-                <div class="block-title" style="margin-bottom:12px;">Tulis Review Kamu</div>
-                <input type="text" id="reviewName" placeholder="Nama kamu">
+                <div class="block-title" style="margin-bottom:12px;">${t('reviewFormTitle')}</div>
+                <input type="text" id="reviewName" placeholder="${t('reviewNamePlaceholder')}">
                 <div class="star-row" id="starRow">
                   ${[1,2,3,4,5].map(n => `<button type="button" data-star="${n}">★</button>`).join('')}
                 </div>
-                <textarea id="reviewText" placeholder="Bagikan pendapatmu tentang ${escapeHtml(title)}..."></textarea>
-                <button class="btn-solid" id="submitReview">Kirim Review</button>
+                <textarea id="reviewText" placeholder="${getLang()==='en' ? `Share your thoughts about ${escapeHtml(title)}...` : `Bagikan pendapatmu tentang ${escapeHtml(title)}...`}"></textarea>
+                <button class="btn-solid" id="submitReview">${t('submitReviewBtn')}</button>
               </div>
             </div>
 
             <div class="side-panel">
-              <div class="side-row"><div class="k">Status</div><div class="v">${escapeHtml(details.status || '—')}</div></div>
-              <div class="side-row"><div class="k">Bahasa Asli</div><div class="v">${(details.original_language||'—').toUpperCase()}</div></div>
-              ${type==='tv' ? `<div class="side-row"><div class="k">Jumlah Season</div><div class="v">${details.number_of_seasons ?? '—'}</div></div>
-              <div class="side-row"><div class="k">Jumlah Episode</div><div class="v">${details.number_of_episodes ?? '—'}</div></div>` : ''}
-              <div class="side-row"><div class="k">Produksi</div><div class="v">${(details.production_companies||[]).slice(0,2).map(p=>escapeHtml(p.name)).join(', ') || '—'}</div></div>
-              ${type==='movie' && details.budget ? `<div class="side-row"><div class="k">Budget</div><div class="v">$${(details.budget||0).toLocaleString()}</div></div>` : ''}
+              <div class="side-row"><div class="k">${t('sideStatus')}</div><div class="v">${escapeHtml(details.status || '—')}</div></div>
+              <div class="side-row"><div class="k">${t('sideOriginalLang')}</div><div class="v">${(details.original_language||'—').toUpperCase()}</div></div>
+              ${type==='tv' ? `<div class="side-row"><div class="k">${t('sideSeasons')}</div><div class="v">${details.number_of_seasons ?? '—'}</div></div>
+              <div class="side-row"><div class="k">${t('sideEpisodes')}</div><div class="v">${details.number_of_episodes ?? '—'}</div></div>` : ''}
+              <div class="side-row"><div class="k">${t('sideProduction')}</div><div class="v">${(details.production_companies||[]).slice(0,2).map(p=>escapeHtml(p.name)).join(', ') || '—'}</div></div>
+              ${type==='movie' && details.budget ? `<div class="side-row"><div class="k">${t('sideBudget')}</div><div class="v">$${(details.budget||0).toLocaleString()}</div></div>` : ''}
             </div>
           </div>
         </div>
@@ -991,9 +1176,9 @@
         document.querySelectorAll('#starRow button').forEach(b => b.classList.toggle('on', Number(b.dataset.star) <= selectedStar));
       });
       document.getElementById('submitReview').addEventListener('click', () => {
-        const name = document.getElementById('reviewName').value.trim() || 'Anonim';
+        const name = document.getElementById('reviewName').value.trim() || t('anonymous');
         const text = document.getElementById('reviewText').value.trim();
-        if(!text){ alert('Tulis review terlebih dahulu ya.'); return; }
+        if(!text){ alert(t('reviewEmptyAlert')); return; }
         saveLocalReview(type, id, { author: name, content: text, rating: selectedStar || null, ts: Date.now(), local: true });
         document.getElementById('reviewText').value = '';
         document.getElementById('reviewName').value = '';
@@ -1015,7 +1200,7 @@
       <div class="review-card">
         <div class="review-head">
           <div class="review-author"><span class="av">${escapeHtml((r.author||'A')[0].toUpperCase())}</span>${escapeHtml(r.author)}</div>
-          <span class="review-badge">Review Pengguna</span>
+          <span class="review-badge">${t('reviewBadgeUser')}</span>
         </div>
         ${r.rating ? `<div class="review-rating">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</div>` : ''}
         <p class="review-text" style="margin-top:8px;">${escapeHtml(r.content)}</p>
@@ -1031,7 +1216,7 @@
         <p class="review-text" style="margin-top:8px;">${escapeHtml((r.content||'').slice(0,420))}${(r.content||'').length>420 ? '…' : ''}</p>
       </div>`).join('');
 
-    list.innerHTML = (localHtml + tmdbHtml) || `<p class="overview-text">Belum ada review untuk judul ini. Jadilah yang pertama menulis!</p>`;
+    list.innerHTML = (localHtml + tmdbHtml) || `<p class="overview-text">${t('reviewEmptyMsg')}</p>`;
   }
 
   /* ---------------- Play page ---------------- */
@@ -1051,7 +1236,7 @@
   }
 
   async function renderPlay(type, id){
-    app.innerHTML = `<div class="status-msg" style="padding-top:180px;">Memuat...</div>`;
+    app.innerHTML = `<div class="status-msg" style="padding-top:180px;">${t('loadingBtn')}</div>`;
     try{
       const [details, videos] = await Promise.all([
         tmdb(`/${type}/${id}`, {}),
@@ -1062,30 +1247,30 @@
       const trailer = (videos.results || []).find(v => v.site === 'YouTube' && v.type === 'Trailer')
         || (videos.results || []).find(v => v.site === 'YouTube' && v.type === 'Teaser')
         || (videos.results || []).find(v => v.site === 'YouTube');
-      console.log('Movielio: video results for', type, id, '→', videos.results, '| dipakai:', trailer);
+      console.log('Movielio: video results for', type, id, '→', videos.results, '| used:', trailer);
       const affiliateLink = getAffiliate();
 
       app.innerHTML = `
         <div class="wrap" style="padding-top:100px;">
-          <p class="eyebrow"><span class="dash"></span>${type==='movie'?'Film':'Series'}<span class="dash"></span></p>
+          <p class="eyebrow"><span class="dash"></span>${type==='movie'?t('typeMovie'):t('typeSeries')}<span class="dash"></span></p>
           ${location.protocol === 'file:' ? `
             <div style="border:1px solid rgba(224,113,107,0.4); background:rgba(224,113,107,0.08); border-radius:10px; padding:14px 16px; margin-bottom:18px; font-size:0.82rem; color:#e0716b; line-height:1.6;">
-              ⚠ Halaman ini dibuka langsung dari file (<code>file://</code>). YouTube menolak memutar video pada mode ini (Error 153). Jalankan lewat local server (mis. <code>python3 -m http.server</code> lalu buka <code>http://localhost:8000</code>) atau upload ke hosting agar video pembuka bisa diputar.
+              ${t('fileProtocolWarning')}
             </div>` : ''}
         </div>
         <div class="play-hero" id="playHero">
           <div class="bg-poster" style="background-image:url('${backdrop||''}')"></div>
           <div class="bg-shade"></div>
           <div class="play-overlay" id="playOverlay">
-            <button class="big-play-btn" id="playBtn" aria-label="Putar trailer">▶</button>
+            <button class="big-play-btn" id="playBtn" aria-label="Play opening video">▶</button>
             <div class="play-title-tag">${escapeHtml(title)}</div>
-            <div class="play-hint">${trailer ? 'Klik untuk memutar video pembuka' : 'Video pembuka tidak tersedia — lanjut ke mitra tayang'}</div>
+            <div class="play-hint">${trailer ? t('playHintTrailer') : t('playHintNoTrailer')}</div>
           </div>
           <div class="affiliate-cta-overlay" id="affiliateOverlay">
             <div class="play-title-tag">${escapeHtml(title)}</div>
-            <p class="note">Video pembuka telah selesai. Movielio tidak menyediakan streaming film penuh — klik tombol di bawah untuk melanjutkan ke mitra tayang pihak ketiga.</p> 
-            <a class="btn-affiliate" href="play.html?=title=${escapeHtml(title)}" target="_blank" rel="noopener nofollow sponsored" id="affiliateBtn">▶ Tonton Film Penuh</a>
-            <a class="skip-link" href="#/detail/${type}/${id}">Kembali ke halaman detail</a>
+            <p class="note">${t('affiliateNote')}</p>
+            <a class="btn-affiliate" href="${affiliateLink}" target="_blank" rel="noopener nofollow sponsored" id="affiliateBtn">${t('watchFullBtn')}</a>
+            <a class="skip-link" href="#/detail/${type}/${id}">${t('backToDetail')}</a>
           </div>
         </div>
         <div class="wrap play-info">
@@ -1097,7 +1282,7 @@
       const playOverlay = document.getElementById('playOverlay');
       const affiliateOverlay = document.getElementById('affiliateOverlay');
       const playHero = document.getElementById('playHero');
-      const OPENING_CLIP_SECONDS = 20;
+      const OPENING_CLIP_SECONDS = 6;
       let clipTimer = null;
 
       function showAffiliateOverlay(){
@@ -1118,10 +1303,10 @@
         if(location.protocol === 'file:'){
           playHero.insertAdjacentHTML('beforeend', `
             <div class="affiliate-cta-overlay show" style="z-index:6;">
-              <div class="play-title-tag">Video pembuka tidak bisa diputar</div>
-              <p class="note">Error ${code} dari YouTube: halaman ini dibuka langsung dari file (file://), sementara YouTube mewajibkan halaman disajikan lewat server web (http:// atau https://) agar video bisa di-embed. Jalankan file ini lewat local server (mis. <code>python3 -m http.server</code>, Live Server di VS Code, atau upload ke hosting) lalu buka lagi via http://.</p>
-              <a class="btn-affiliate" href="${affiliateLink}" target="_blank" rel="noopener nofollow sponsored">▶ Tonton Film Penuh di Mitra Kami</a>
-              <a class="skip-link" href="#/detail/${type}/${id}">Kembali ke halaman detail</a>
+              <div class="play-title-tag">${t('ytErrorTitle')}</div>
+              <p class="note">${t('ytErrorNote', {code})}</p>
+              <a class="btn-affiliate" href="${affiliateLink}" target="_blank" rel="noopener nofollow sponsored">${t('watchFullBtn')}</a>
+              <a class="skip-link" href="#/detail/${type}/${id}">${t('backToDetail')}</a>
             </div>`);
         } else {
           showAffiliateOverlay();
@@ -1153,12 +1338,12 @@
           events: {
             onStateChange: (e) => {
               if(e.data === YT.PlayerState.PLAYING && !clipStarted){
-                // Video pembuka diputar selama beberapa detik saja, lalu lanjut ke CTA affiliate.
+                // The opening video only plays for a short window before switching to the affiliate CTA.
                 clipStarted = true;
                 clipTimer = setTimeout(showAffiliateOverlay, OPENING_CLIP_SECONDS * 1000);
               }
               if(e.data === YT.PlayerState.ENDED){
-                // Fallback kalau video pembuka lebih pendek dari durasi yang ditentukan.
+                // Fallback in case the opening video is shorter than the configured window.
                 showAffiliateOverlay();
               }
             },
@@ -1188,27 +1373,27 @@
 
     if(!key){
       statusEl.style.color = '#e0716b';
-      statusEl.textContent = 'Isi API Key atau Read Access Token terlebih dahulu.';
+      statusEl.textContent = t('fillKeyFirst');
       return;
     }
 
-    saveBtn.disabled = true; saveBtn.textContent = 'Memeriksa...';
+    saveBtn.disabled = true; saveBtn.textContent = t('checkingBtn');
     statusEl.style.color = 'var(--text-lo)';
-    statusEl.textContent = 'Menghubungi TMDb untuk memverifikasi key...';
+    statusEl.textContent = t('checkingMsg');
 
     const result = await testApiKey(key);
-    saveBtn.disabled = false; saveBtn.textContent = 'Simpan & Cek';
+    saveBtn.disabled = false; saveBtn.textContent = t('saveCheckBtn');
 
     if(!result.ok){
       statusEl.style.color = '#e0716b';
       statusEl.textContent = result.message === 'NETWORK'
-        ? 'Gagal terhubung ke TMDb (cek koneksi internet / ad-blocker).'
-        : `Key ditolak TMDb: ${result.message}`;
+        ? t('keyNetworkErrorMsg')
+        : `${t('keyRejectedPrefix')} ${result.message}`;
       return; // don't save/close on a bad key — let the user fix it first
     }
 
     statusEl.style.color = '#5fd48a';
-    statusEl.textContent = 'Key valid ✓ Tersimpan.';
+    statusEl.textContent = t('keyValidMsg');
     setApiKey(key);
     setAffiliate(document.getElementById('affiliateLinkInput').value.trim());
     setTimeout(() => {
@@ -1217,7 +1402,31 @@
     }, 500);
   });
 
+  /* ---------------- Language toggle ---------------- */
+  function applyStaticI18n(){
+    document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { el.placeholder = t(el.dataset.i18nPlaceholder); });
+    document.querySelectorAll('[data-i18n-title]').forEach(el => {
+      el.title = t(el.dataset.i18nTitle);
+      el.setAttribute('aria-label', t(el.dataset.i18nTitle));
+    });
+    const langBtn = document.getElementById('langBtn');
+    if(langBtn){
+      langBtn.textContent = getLang() === 'en' ? 'EN' : 'ID';
+      langBtn.title = t('langToggleTitle');
+      langBtn.setAttribute('aria-label', t('langToggleTitle'));
+    }
+    document.documentElement.lang = getLang();
+  }
+
+  document.getElementById('langBtn').addEventListener('click', () => {
+    setLang(getLang() === 'en' ? 'id' : 'en');
+    applyStaticI18n();
+    router(); // re-render current page content in the newly selected language
+  });
+
   /* ---------------- Init ---------------- */
+  applyStaticI18n();
   if(!location.hash) location.hash = '#/home';
   router();
 
