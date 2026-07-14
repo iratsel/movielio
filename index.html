@@ -370,9 +370,6 @@
   .legal-body h2:first-child{margin-top:0;}
   .legal-body p{color:var(--text-mid); line-height:1.85; font-size:0.92rem; margin-bottom:6px;}
   .legal-body code{font-family:var(--font-mono); font-size:0.85em; background:var(--bg-3); padding:2px 6px; border-radius:4px; color:var(--cyan);}
-
-  .hidden {display: none !important;
-}
 </style>
 </head>
 <body>
@@ -410,17 +407,17 @@
 
 <div class="modal-overlay" id="settingsModal">
   <div class="modal">
-    <h2>Mulai Menonton Film/TV Series favoritmu!</h2>
+    <h2>Pengaturan TMDb API</h2>
     <p>Movielio butuh kredensial TMDb untuk mengambil data film &amp; series. Terima "API Key (v3 auth)" ATAU "API Read Access Token (v4 auth)" — keduanya bisa didapat di halaman yang sama. Disimpan hanya di browser kamu sendiri (localStorage), tidak dikirim ke server manapun selain TMDb.</p>
     <label for="apiKeyInput">TMDb API Key / Read Access Token</label>
-    <input type="text" id="apiKeyInput" value="eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1ODQ4NDhiODkyMWZlOGJlMjZjOTEwODczYjliMDVhOSIsIm5iZiI6MTM5MDc0NDkyMy4wLCJzdWIiOiI1MmU1MTU1YTE5YzI5NTQ1M2EwMGZkZWQiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0">
-    <div id="apiKeyStatus" style="font-family:var(--font-mono); font-size:11px; margin:-8px 0 14px; min-height:16px;" ></div>
-    <label for="affiliateLinkInput" >Link Affiliate (default, opsional)</label>
-    <input type="text" id="affiliateLinkInput" value="https://s.shopee.co.id/4LHltZIfEA" >
+    <input type="text" id="apiKeyInput" placeholder="contoh: 3fd2be6f0c70a2a598f084ddfb75487c">
+    <div id="apiKeyStatus" style="font-family:var(--font-mono); font-size:11px; margin:-8px 0 14px; min-height:16px;"></div>
+    <label for="affiliateLinkInput">Link Affiliate (default, opsional)</label>
+    <input type="text" id="affiliateLinkInput" placeholder="https://link-affiliate-kamu.example.com">
     <div class="modal-actions">
-      <!-- <a class="api-link" href="https://www.themoviedb.org/settings/api" target="_blank" rel="noopener" style="margin-right:auto; align-self:center;">Dapatkan API Key →</a>
-      <button class="btn-text" id="settingsCancel">Batal</button>-->
-      <button class="btn-solid" id="settingsSave">Browse Movies &amp; Cek</button>
+      <a class="api-link" href="https://www.themoviedb.org/settings/api" target="_blank" rel="noopener" style="margin-right:auto; align-self:center;">Dapatkan API Key →</a>
+      <button class="btn-text" id="settingsCancel">Batal</button>
+      <button class="btn-solid" id="settingsSave">Simpan &amp; Cek</button>
     </div>
   </div>
 </div>
