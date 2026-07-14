@@ -433,10 +433,10 @@
   const movielio_tmdb_key ="eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1ODQ4NDhiODkyMWZlOGJlMjZjOTEwODczYjliMDVhOSIsIm5iZiI6MTM5MDc0NDkyMy4wLCJzdWIiOiI1MmU1MTU1YTE5YzI5NTQ1M2EwMGZkZWQiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.cv6omRfppAAoV4XRb9TdIe22Xg-3z2lrWwPUNp3nY3g";
   const movielio_affiliate_link = "https://s.shopee.co.id/4LHltZIfEA";
 
-  function getApiKey(){ return console.log('movielio_tmdb_key') || ""; }
-  function setApiKey(k){ console.log('movielio_tmdb_key', k); }
-  function getAffiliate(){ return console.log('movielio_affiliate_link') || DEFAULT_AFFILIATE; }
-  function setAffiliate(v){ console.log('movielio_affiliate_link', v || DEFAULT_AFFILIATE); }
+  function getApiKey(){ return console.log(movielio_tmdb_key) || ""; }
+  function setApiKey(k){ console.log(movielio_tmdb_key, k); }
+  function getAffiliate(){ return console.log(movielio_affiliate_link) || DEFAULT_AFFILIATE; }
+  function setAffiliate(v){ console.log(movielio_affiliate_link, v || DEFAULT_AFFILIATE); }
 
   function reviewsKey(type, id){ return `movielio_reviews_${type}_${id}`; }
   function getLocalReviews(type, id){
