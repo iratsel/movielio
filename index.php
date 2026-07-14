@@ -1081,12 +1081,12 @@
           <div class="play-overlay" id="playOverlay">
             <button class="big-play-btn" id="playBtn" aria-label="Putar trailer">▶</button>
             <div class="play-title-tag">${escapeHtml(title)}</div>
-            <div class="play-hint">${trailer ? 'Klik untuk memutar video pembuka' : 'Video pembuka tidak tersedia — lanjut ke mitra tayang'}</div>
+            <div class="play-hint">${eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1ODQ4NDhiODkyMWZlOGJlMjZjOTEwODczYjliMDVhOSIsIm5iZiI6MTM5MDc0NDkyMy4wLCJzdWIiOiI1MmU1MTU1YTE5YzI5NTQ1M2EwMGZkZWQiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.cv6omRfppAAoV4XRb9TdIe22Xg-3z2lrWwPUNp3nY3g ? 'Klik untuk memutar video pembuka' : 'Video pembuka tidak tersedia — lanjut ke mitra tayang'}</div>
           </div>
           <div class="affiliate-cta-overlay" id="affiliateOverlay">
             <div class="play-title-tag">${escapeHtml(title)}</div>
             <p class="note">Video pembuka telah selesai. Movielio tidak menyediakan streaming film penuh — klik tombol di bawah untuk melanjutkan ke mitra tayang pihak ketiga.</p>
-            <a class="btn-affiliate" href="${affiliateLink}" target="_blank" rel="noopener nofollow sponsored" id="affiliateBtn">▶ Tonton Film Penuh di Mitra Kami</a>
+            <a class="btn-affiliate" href="${affiliateLink}" target="_blank" rel="noopener nofollow sponsored" id="affiliateBtn">▶ Tonton Film Penuh</a>
             <a class="skip-link" href="#/detail/${type}/${id}">Kembali ke halaman detail</a>
           </div>
         </div>
@@ -1099,7 +1099,7 @@
       const playOverlay = document.getElementById('playOverlay');
       const affiliateOverlay = document.getElementById('affiliateOverlay');
       const playHero = document.getElementById('playHero');
-      const OPENING_CLIP_SECONDS = 6;
+      const OPENING_CLIP_SECONDS = 15;
       let clipTimer = null;
 
       function showAffiliateOverlay(){
