@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Movielio — Jelajahi Film &amp; Series</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#07080a;
+    --bg-2:#0d0f12;
+    --bg-3:#131519;
+    --amber:#e8a33d;
+    --amber-dim:#8a6425;
+    --cyan:#4fd8e0;
+    --cyan-dim:#2a6b70;
+    --text-hi:#eef1f0;
+    --text-mid:#8b9296;
+    --text-lo:#4a5054;
+    --line:rgba(79,216,224,0.22);
+    --border:rgba(238,241,240,0.08);
+    --radius:14px;
+    --font-display:'Oswald', sans-serif;
+    --font-body:'Inter', sans-serif;
+    --font-mono:'JetBrains Mono', monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:
+      radial-gradient(1000px 600px at 15% -10%, rgba(232,163,61,0.06), transparent 60%),
+      radial-gradient(900px 600px at 90% 10%, rgba(79,216,224,0.05), transparent 60%),
+      var(--bg);
+    color:var(--text-hi);
+    font-family:var(--font-body);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; scroll-behavior:auto !important;}
+  }
+  a{color:inherit; text-decoration:none;}
+  img{max-width:100%; display:block;}
+  button{font-family:inherit; cursor:pointer;}
+  ::selection{background:var(--cyan); color:#05070a;}
+  :focus-visible{outline:2px solid var(--cyan); outline-offset:2px; border-radius:4px;}
+  .wrap{max-width:1280px; margin:0 auto; padding:0 24px;}
+
+  /* ---------- Sprocket rail (signature motif) ---------- */
+  .sprocket{
+    display:flex; gap:10px; align-items:center; height:14px; overflow:hidden; opacity:0.5;
+  }
+  .sprocket span{width:6px; height:6px; min-width:6px; border-radius:1px; background:var(--border); border:1px solid var(--border);}
+  .sprocket.on span{background:var(--cyan-dim); border-color:var(--cyan-dim);}
+
+  /* ---------- Header ---------- */
+  header{
+    position:fixed; top:0; left:0; right:0; z-index:200;
+    background:rgba(7,8,10,0.7); backdrop-filter:blur(16px);
+    border-bottom:1px solid var(--border);
+  }
+  nav{display:flex; align-items:center; gap:20px; padding:14px 24px; max-width:1280px; margin:0 auto;}
+  .logo{
+    font-family:var(--font-display); font-size:1.3rem; font-weight:600; letter-spacing:0.02em;
+    display:flex; align-items:center; gap:10px; white-space:nowrap;
+  }
+  .logo .dot{width:8px; height:8px; border-radius:50%; background:var(--amber); box-shadow:0 0 12px var(--amber);}
+  .logo b{color:var(--cyan);}
+  .nav-links{display:flex; gap:4px; font-family:var(--font-mono); font-size:12px; letter-spacing:0.06em; text-transform:uppercase;}
+  .nav-links a{padding:8px 14px; border-radius:8px; color:var(--text-mid); transition:all .2s ease;}
+  .nav-links a:hover, .nav-links a.active{color:var(--text-hi); background:var(--bg-3);}
+  .search-box{
+    margin-left:auto; display:flex; align-items:center; gap:8px; background:var(--bg-3);
+    border:1px solid var(--border); border-radius:999px; padding:8px 16px; flex:1; max-width:340px;
+    transition:border-color .2s ease;
+  }
+  .search-box:focus-within{border-color:var(--cyan-dim);}
+  .search-box input{
+    background:none; border:none; outline:none; color:var(--text-hi); font-size:13px; width:100%; font-family:var(--font-body);
+  }
+  .search-box input::placeholder{color:var(--text-lo);}
+  .icon-btn{
+    width:36px; height:36px; border-radius:50%; border:1px solid var(--border); background:var(--bg-3);
+    display:flex; align-items:center; justify-content:center; color:var(--text-mid); font-size:14px; transition:all .2s ease;
+  }
+  .icon-btn:hover{color:var(--cyan); border-color:var(--cyan-dim);}
+  @media (max-width:760px){
+    .nav-links{display:none;}
+    .search-box{max-width:none;}
+  }
+
+  /* ---------- Hero / page top ---------- */
+  .page-top{padding:130px 0 40px;}
+  .eyebrow{
+    font-family:var(--font-mono); font-size:11px; letter-spacing:0.24em; text-transform:uppercase; color:var(--cyan);
+    display:flex; align-items:center; gap:12px; margin-bottom:14px;
+  }
+  .eyebrow .dash{width:24px; height:1px; background:var(--cyan-dim);}
+  h1.page-title{font-family:var(--font-display); font-size:clamp(1.8rem,4.5vw,3rem); font-weight:600; letter-spacing:0.01em;}
+  .page-sub{color:var(--text-mid); margin-top:10px; max-width:560px; line-height:1.7; font-size:0.95rem;}
+
+  /* ---------- Filter bar ---------- */
+  .filter-bar{
+    display:flex; flex-wrap:wrap; align-items:center; gap:12px; margin:28px 0 32px;
+    padding:14px 18px; background:var(--bg-2); border:1px solid var(--border); border-radius:var(--radius);
+  }
+  .seg{display:flex; background:var(--bg); border:1px solid var(--border); border-radius:999px; padding:3px; gap:2px;}
+  .seg button{
+    padding:7px 16px; border:none; background:none; color:var(--text-mid); font-size:12px; border-radius:999px;
+    font-family:var(--font-mono); letter-spacing:0.04em; text-transform:uppercase; transition:all .2s ease;
+  }
+  .seg button.active{background:var(--cyan); color:#04181a; font-weight:600;}
+  .filter-bar select{
+    background:var(--bg); border:1px solid var(--border); color:var(--text-hi); font-size:12px;
+    padding:9px 14px; border-radius:999px; font-family:var(--font-mono); letter-spacing:0.03em; outline:none;
+  }
+  .filter-bar .spacer{flex:1;}
+  .result-count{font-family:var(--font-mono); font-size:11px; color:var(--text-lo); letter-spacing:0.05em;}
+
+  /* ---------- Grid ---------- */
+  .grid{
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(160px,1fr)); gap:18px; padding-bottom:40px;
+  }
+  .card{
+    position:relative; border-radius:12px; overflow:hidden; border:1px solid var(--border); background:var(--bg-2);
+    transition:transform .3s ease, border-color .3s ease, box-shadow .3s ease; cursor:pointer;
+  }
+  .card:hover{transform:translateY(-5px); border-color:var(--cyan-dim); box-shadow:0 20px 40px -18px rgba(0,0,0,0.7);}
+  .card .poster-wrap{aspect-ratio:2/3; background:var(--bg-3); position:relative; overflow:hidden;}
+  .card img{width:100%; height:100%; object-fit:cover; transition:transform .5s ease;}
+  .card:hover img{transform:scale(1.06);}
+  .card .scan{
+    position:absolute; inset:0; background:linear-gradient(180deg, transparent 60%, rgba(7,8,10,0.9) 100%);
+    opacity:0; transition:opacity .3s ease;
+  }
+  .card:hover .scan{opacity:1;}
+  .card .hud-frame{
+    position:absolute; inset:6px; border:1px solid var(--line); opacity:0; transition:opacity .3s ease; border-radius:8px; pointer-events:none;
+  }
+  .card:hover .hud-frame{opacity:1;}
+  .card .rating-chip{
+    position:absolute; top:8px; right:8px; background:rgba(7,8,10,0.75); border:1px solid var(--border);
+    border-radius:999px; padding:3px 8px; font-family:var(--font-mono); font-size:10.5px; color:var(--amber);
+    display:flex; align-items:center; gap:4px; backdrop-filter:blur(4px);
+  }
+  .card .type-chip{
+    position:absolute; top:8px; left:8px; background:rgba(7,8,10,0.75); border:1px solid var(--border);
+    border-radius:6px; padding:3px 7px; font-family:var(--font-mono); font-size:9.5px; letter-spacing:0.06em;
+    text-transform:uppercase; color:var(--cyan);
+  }
+  .card .meta{padding:12px;}
+  .card .meta h3{font-size:0.86rem; font-weight:600; line-height:1.3; color:var(--text-hi); margin-bottom:4px;
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;}
+  .card .meta .year{font-family:var(--font-mono); font-size:11px; color:var(--text-lo);}
+  .card .placeholder-poster{
+    width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:var(--text-lo);
+    font-family:var(--font-mono); font-size:11px; text-align:center; padding:10px;
+  }
+
+  .load-more-wrap{display:flex; justify-content:center; padding:10px 0 60px;}
+
+  /* ---------- Popular rail (home top) ---------- */
+  .rail-title{font-family:var(--font-display); font-size:clamp(1.4rem,3vw,1.9rem); font-weight:600; margin-top:4px;}
+  .popular-rail{
+    display:flex; gap:16px; overflow-x:auto; padding:22px 2px 34px; scroll-snap-type:x proximity;
+  }
+  .popular-rail::-webkit-scrollbar{height:6px;}
+  .popular-rail::-webkit-scrollbar-thumb{background:var(--border); border-radius:6px;}
+  .pop-card{
+    position:relative; min-width:150px; width:150px; scroll-snap-align:start; cursor:pointer;
+    border-radius:12px; overflow:visible; transition:transform .3s ease;
+  }
+  .pop-card:hover{transform:translateY(-5px);}
+  .pop-rank{
+    position:absolute; top:-14px; left:-6px; z-index:4; font-family:var(--font-display); font-weight:700;
+    font-size:2.1rem; color:transparent; -webkit-text-stroke:1.5px var(--amber-dim); line-height:1; pointer-events:none;
+  }
+  .pop-card:hover .pop-rank{-webkit-text-stroke:1.5px var(--amber);}
+  .pop-poster{
+    aspect-ratio:2/3; border-radius:12px; overflow:hidden; border:1px solid var(--border); background:var(--bg-3);
+    position:relative;
+  }
+  .pop-poster img{width:100%; height:100%; object-fit:cover; transition:transform .5s ease;}
+  .pop-card:hover .pop-poster img{transform:scale(1.06);}
+  .pop-card .meta{padding:10px 2px 0;}
+  .pop-card .meta h3{
+    font-size:0.82rem; font-weight:600; line-height:1.3; color:var(--text-hi);
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; margin-bottom:3px;
+  }
+  .pop-card .meta .year{font-family:var(--font-mono); font-size:10.5px; color:var(--text-lo);}
+  @media (max-width:600px){ .pop-card{min-width:128px; width:128px;} }
+
+  .btn-outline{
+    font-family:var(--font-mono); font-size:12px; letter-spacing:0.08em; text-transform:uppercase;
+    padding:13px 28px; border-radius:999px; border:1px solid var(--border); color:var(--text-mid);
+    transition:all .25s ease; background:var(--bg-2);
+  }
+  .btn-outline:hover{border-color:var(--cyan-dim); color:var(--cyan);}
+  .btn-outline:disabled{opacity:.5; cursor:default;}
+
+  /* ---------- Skeleton / loading ---------- */
+  .skel{background:linear-gradient(100deg, var(--bg-3) 30%, #1a1d22 50%, var(--bg-3) 70%); background-size:200% 100%; animation:shimmer 1.4s infinite;}
+  @keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+  .status-msg{
+    text-align:center; padding:60px 20px; color:var(--text-mid); font-family:var(--font-mono); font-size:13px; letter-spacing:0.04em;
+  }
+
+  /* ---------- Settings modal ---------- */
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(4,5,6,0.75); backdrop-filter:blur(4px); z-index:400;
+    display:none; align-items:center; justify-content:center; padding:20px;
+  }
+  .modal-overlay.open{display:flex;}
+  .modal{
+    background:var(--bg-2); border:1px solid var(--border); border-radius:var(--radius); padding:28px;
+    max-width:420px; width:100%;
+  }
+  .modal h2{font-family:var(--font-display); font-size:1.3rem; margin-bottom:6px;}
+  .modal p{color:var(--text-mid); font-size:0.85rem; line-height:1.6; margin-bottom:18px;}
+  .modal label{font-family:var(--font-mono); font-size:11px; letter-spacing:0.06em; text-transform:uppercase; color:var(--text-lo); display:block; margin-bottom:6px;}
+  .modal input{
+    width:100%; background:var(--bg); border:1px solid var(--border); color:var(--text-hi); padding:11px 14px;
+    border-radius:8px; font-size:13px; outline:none; margin-bottom:16px; font-family:var(--font-mono);
+  }
+  .modal input:focus{border-color:var(--cyan-dim);}
+  .modal-actions{display:flex; gap:10px; justify-content:flex-end;}
+  .btn-solid{
+    font-family:var(--font-mono); font-size:12px; letter-spacing:0.06em; text-transform:uppercase; padding:11px 22px;
+    border-radius:999px; background:var(--cyan); color:#04181a; font-weight:600; border:none; transition:opacity .2s ease;
+  }
+  .btn-solid:hover{opacity:.85;}
+  .btn-text{background:none; border:none; color:var(--text-mid); font-size:12px; font-family:var(--font-mono); text-transform:uppercase; letter-spacing:0.06em; padding:11px 16px;}
+  .modal .api-link{color:var(--cyan); font-size:11.5px;}
+
+  /* ---------- Detail page ---------- */
+  .backdrop-hero{
+    position:relative; min-height:56vh; display:flex; align-items:flex-end; padding:130px 0 40px;
+    background-size:cover; background-position:center top;
+  }
+  .backdrop-hero::before{
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(180deg, rgba(7,8,10,0.2) 0%, rgba(7,8,10,0.75) 55%, var(--bg) 100%);
+  }
+  .backdrop-hero .hero-grid{position:absolute; inset:0; opacity:.15; background-image:linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px); background-size:48px 48px; mask-image:radial-gradient(ellipse 80% 60% at 50% 30%, black, transparent 75%);}
+  .hero-inner{position:relative; z-index:2; display:flex; gap:28px; align-items:flex-end; flex-wrap:wrap;}
+  .detail-poster{
+    width:180px; min-width:180px; aspect-ratio:2/3; border-radius:12px; overflow:hidden; border:1px solid var(--border);
+    box-shadow:0 30px 60px -20px rgba(0,0,0,0.8); background:var(--bg-3);
+  }
+  .detail-poster img{width:100%; height:100%; object-fit:cover;}
+  .detail-head{flex:1; min-width:240px;}
+  .detail-head .type-tag{
+    font-family:var(--font-mono); font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--amber);
+    display:flex; align-items:center; gap:8px; margin-bottom:10px;
+  }
+  .detail-head h1{font-family:var(--font-display); font-size:clamp(1.8rem,4.4vw,3.2rem); font-weight:600; line-height:1.05;}
+  .detail-head .tagline{color:var(--text-mid); font-style:italic; margin-top:8px; font-size:0.95rem;}
+  .detail-stats{display:flex; flex-wrap:wrap; gap:18px; margin-top:18px;}
+  .stat-box{font-family:var(--font-mono);}
+  .stat-box .val{font-size:1.2rem; color:var(--text-hi); font-weight:600;}
+  .stat-box .val.rating{color:var(--amber);}
+  .stat-box .lbl{font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-lo); margin-top:2px;}
+  .genre-row{display:flex; flex-wrap:wrap; gap:8px; margin-top:18px;}
+  .genre-chip{
+    font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.04em; text-transform:uppercase;
+    padding:6px 12px; border:1px solid var(--border); border-radius:999px; color:var(--text-mid);
+  }
+  .hero-cta{display:flex; gap:12px; margin-top:26px; flex-wrap:wrap;}
+  .btn-play{
+    display:inline-flex; align-items:center; gap:10px; background:var(--amber); color:#1c1206; font-weight:700;
+    padding:15px 28px; border-radius:999px; font-family:var(--font-display); font-size:0.95rem; letter-spacing:0.02em;
+    transition:transform .25s ease, box-shadow .25s ease; box-shadow:0 14px 30px -12px rgba(232,163,61,0.4);
+  }
+  .btn-play:hover{transform:translateY(-2px); box-shadow:0 20px 40px -12px rgba(232,163,61,0.55);}
+
+  .detail-body{padding:44px 0 80px;}
+  .detail-grid{display:grid; grid-template-columns:2fr 1fr; gap:48px;}
+  @media (max-width:900px){ .detail-grid{grid-template-columns:1fr;} }
+  .block-title{
+    font-family:var(--font-display); font-size:1.1rem; letter-spacing:0.02em; margin-bottom:16px;
+    display:flex; align-items:center; gap:10px; text-transform:uppercase;
+  }
+  .block-title::before{content:''; width:4px; height:16px; background:var(--cyan); display:inline-block;}
+  .overview-text{color:var(--text-mid); line-height:1.85; font-size:0.95rem; margin-bottom:36px;}
+  .cast-row{display:flex; gap:14px; overflow-x:auto; padding-bottom:10px; margin-bottom:36px;}
+  .cast-item{min-width:100px; text-align:center;}
+  .cast-item .ph{width:100px; height:100px; border-radius:50%; overflow:hidden; background:var(--bg-3); border:1px solid var(--border); margin-bottom:8px;}
+  .cast-item .ph img{width:100%; height:100%; object-fit:cover;}
+  .cast-item .nm{font-size:0.8rem; font-weight:600; color:var(--text-hi);}
+  .cast-item .rl{font-size:0.72rem; color:var(--text-lo); margin-top:2px;}
+
+  .side-panel{background:var(--bg-2); border:1px solid var(--border); border-radius:var(--radius); padding:22px;}
+  .side-row{display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border); font-size:0.85rem;}
+  .side-row:last-child{border-bottom:none;}
+  .side-row .k{color:var(--text-lo); font-family:var(--font-mono); font-size:11px; letter-spacing:0.05em; text-transform:uppercase;}
+  .side-row .v{color:var(--text-hi); text-align:right; max-width:60%;}
+
+  /* ---------- Reviews ---------- */
+  .review-card{
+    background:var(--bg-2); border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:14px;
+  }
+  .review-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;}
+  .review-author{font-weight:600; font-size:0.9rem; display:flex; align-items:center; gap:8px;}
+  .review-author .av{width:30px; height:30px; border-radius:50%; background:linear-gradient(135deg,var(--cyan-dim),var(--amber-dim)); display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-size:11px; font-weight:700;}
+  .review-badge{font-family:var(--font-mono); font-size:9.5px; letter-spacing:0.06em; text-transform:uppercase; padding:3px 8px; border-radius:6px; border:1px solid var(--border); color:var(--text-lo);}
+  .review-text{color:var(--text-mid); font-size:0.87rem; line-height:1.75;}
+  .review-rating{font-family:var(--font-mono); color:var(--amber); font-size:0.85rem;}
+
+  .review-form{background:var(--bg-2); border:1px solid var(--border); border-radius:var(--radius); padding:22px; margin-top:26px;}
+  .review-form textarea{
+    width:100%; background:var(--bg); border:1px solid var(--border); color:var(--text-hi); border-radius:8px;
+    padding:12px 14px; font-family:var(--font-body); font-size:0.88rem; resize:vertical; min-height:90px; outline:none; margin:10px 0 14px;
+  }
+  .review-form textarea:focus{border-color:var(--cyan-dim);}
+  .review-form input[type=text]{
+    width:100%; background:var(--bg); border:1px solid var(--border); color:var(--text-hi); border-radius:8px;
+    padding:11px 14px; font-size:0.85rem; outline:none; margin-bottom:12px;
+  }
+  .star-row{display:flex; gap:6px; margin-bottom:14px;}
+  .star-row button{background:none; border:1px solid var(--border); width:34px; height:34px; border-radius:8px; color:var(--text-lo); font-size:14px; transition:all .2s ease;}
+  .star-row button.on{color:var(--amber); border-color:var(--amber-dim); background:rgba(232,163,61,0.08);}
+
+  /* ---------- Play page ---------- */
+  .play-hero{position:relative; width:100%; aspect-ratio:16/9; max-height:88vh; background:#000; overflow:hidden;}
+  .play-hero .bg-poster{position:absolute; inset:0; background-size:cover; background-position:center; filter:brightness(.55);}
+  .play-hero .bg-shade{position:absolute; inset:0; background:linear-gradient(0deg, var(--bg) 0%, transparent 30%, rgba(7,8,10,0.3) 100%);}
+  .play-hero iframe, .play-hero video{position:absolute; inset:0; width:100%; height:100%; border:none; z-index:2;}
+  .play-overlay{
+    position:absolute; inset:0; z-index:3; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:20px; gap:20px;
+  }
+  .big-play-btn{
+    width:84px; height:84px; border-radius:50%; background:rgba(238,241,240,0.12); border:1px solid rgba(238,241,240,0.3);
+    backdrop-filter:blur(6px); display:flex; align-items:center; justify-content:center; font-size:28px; color:var(--text-hi);
+    transition:all .3s ease;
+  }
+  .big-play-btn:hover{background:var(--amber); border-color:var(--amber); color:#1c1206; transform:scale(1.06);}
+  .play-hint{font-family:var(--font-mono); font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--text-mid);}
+  .play-title-tag{font-family:var(--font-display); font-size:clamp(1.4rem,3.4vw,2.2rem); font-weight:600;}
+
+  .affiliate-cta-overlay{
+    position:absolute; inset:0; z-index:5; display:none; flex-direction:column; align-items:center; justify-content:center;
+    gap:16px; text-align:center; padding:20px; background:rgba(7,8,10,0.72); backdrop-filter:blur(6px);
+  }
+  .affiliate-cta-overlay.show{display:flex;}
+  .affiliate-cta-overlay p.note{font-family:var(--font-mono); font-size:11px; color:var(--text-lo); max-width:360px; letter-spacing:0.02em;}
+  .btn-affiliate{
+    display:inline-flex; align-items:center; gap:10px; background:var(--amber); color:#1c1206; font-weight:700;
+    padding:18px 34px; border-radius:999px; font-family:var(--font-display); font-size:1.05rem;
+    box-shadow:0 20px 40px -14px rgba(232,163,61,0.5); transition:transform .25s ease;
+  }
+  .btn-affiliate:hover{transform:translateY(-2px);}
+  .skip-link{font-family:var(--font-mono); font-size:11px; color:var(--text-lo); letter-spacing:0.06em; text-decoration:underline; text-underline-offset:4px;}
+
+  .play-info{padding:40px 0 70px;}
+  .play-info .tag-line{color:var(--text-mid); max-width:640px; line-height:1.8; font-size:0.92rem;}
+
+  footer{padding:50px 24px 60px; border-top:1px solid var(--border); margin-top:20px;}
+  footer .brand{font-family:var(--font-display); font-size:1rem; margin-bottom:10px; display:flex; align-items:center; gap:8px;}
+  footer p{font-size:0.78rem; color:var(--text-lo); line-height:1.8; max-width:640px;}
+  footer .foot-links{display:flex; gap:16px; margin-top:16px; font-family:var(--font-mono); font-size:11px; text-transform:uppercase; letter-spacing:0.05em; flex-wrap:wrap;}
+  footer .foot-links a{color:var(--text-mid);}
+  footer .foot-links a:hover{color:var(--cyan);}
+
+  /* ---------- Legal pages ---------- */
+  .legal-body{max-width:720px;}
+  .legal-body h2{font-family:var(--font-display); font-size:1.1rem; margin:32px 0 10px; color:var(--text-hi); letter-spacing:0.01em;}
+  .legal-body h2:first-child{margin-top:0;}
+  .legal-body p{color:var(--text-mid); line-height:1.85; font-size:0.92rem; margin-bottom:6px;}
+  .legal-body code{font-family:var(--font-mono); font-size:0.85em; background:var(--bg-3); padding:2px 6px; border-radius:4px; color:var(--cyan);}
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <a href="#/home" class="logo"><span class="dot"></span>Movie<b>lio</b></a>
+    <div class="nav-links">
+      <a href="#/home" data-nav="home">Jelajah</a>
+      <a href="#/home?type=movie" data-nav="movie">Film</a>
+      <a href="#/home?type=tv" data-nav="tv">Series</a>
+    </div>
+    <form class="search-box" id="searchForm">
+      <span style="color:var(--text-lo); font-size:13px;">⌕</span>
+      <input type="text" id="searchInput" placeholder="Cari film atau series...">
+    </form>
+    <button class="icon-btn" id="settingsBtn" title="Pengaturan API Key" aria-label="Pengaturan API Key">⚙</button>
+  </nav>
+</header>
+
+<main id="app"></main>
+
+<footer>
+  <div class="wrap">
+    <div class="brand"><span class="dot" style="width:7px;height:7px;border-radius:50%;background:var(--amber);display:inline-block;"></span>Movielio</div>
+    <p>Movielio menampilkan data film &amp; TV series dari TMDb API untuk keperluan katalog dan review. Movielio tidak meng-hosting file video apa pun. Tautan "Tonton Film Penuh" pada halaman play mengarahkan ke situs mitra affiliate pihak ketiga.</p>
+    <div class="foot-links">
+      <a href="#/home">Jelajah Katalog</a>
+      <a href="#/privacy">Kebijakan Privasi</a>
+      <a href="#/dmca">DMCA</a>
+      <a href="https://www.themoviedb.org/" target="_blank" rel="noopener">Didukung oleh TMDb</a>
+    </div>
+  </div>
+</footer>
+
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal">
+    <h2>Pengaturan TMDb API</h2>
+    <p>Movielio butuh kredensial TMDb untuk mengambil data film &amp; series. Terima "API Key (v3 auth)" ATAU "API Read Access Token (v4 auth)" — keduanya bisa didapat di halaman yang sama. Disimpan hanya di browser kamu sendiri (localStorage), tidak dikirim ke server manapun selain TMDb.</p>
+    <label for="apiKeyInput">TMDb API Key / Read Access Token</label>
+    <input type="text" id="apiKeyInput" placeholder="contoh: 3fd2be6f0c70a2a598f084ddfb75487c">
+    <div id="apiKeyStatus" style="font-family:var(--font-mono); font-size:11px; margin:-8px 0 14px; min-height:16px;"></div>
+    <label for="affiliateLinkInput">Link Affiliate (default, opsional)</label>
+    <input type="text" id="affiliateLinkInput" placeholder="https://link-affiliate-kamu.example.com">
+    <div class="modal-actions">
+      <a class="api-link" href="https://www.themoviedb.org/settings/api" target="_blank" rel="noopener" style="margin-right:auto; align-self:center;">Dapatkan API Key →</a>
+      <button class="btn-text" id="settingsCancel">Batal</button>
+      <button class="btn-solid" id="settingsSave">Simpan &amp; Cek</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- Config ---------------- */
+  const TMDB_IMG = "https://image.tmdb.org/t/p/";
+  const TMDB_API = "https://api.themoviedb.org/3";
+  const DEFAULT_AFFILIATE = "https://your-affiliate-link.example.com/watch";
+
+  function getApiKey(){ return localStorage.getItem('movielio_tmdb_key') || ""; }
+  function setApiKey(k){ localStorage.setItem('movielio_tmdb_key', k); }
+  function getAffiliate(){ return localStorage.getItem('movielio_affiliate_link') || DEFAULT_AFFILIATE; }
+  function setAffiliate(v){ localStorage.setItem('movielio_affiliate_link', v || DEFAULT_AFFILIATE); }
+
+  function reviewsKey(type, id){ return `movielio_reviews_${type}_${id}`; }
+  function getLocalReviews(type, id){
+    try{ return JSON.parse(localStorage.getItem(reviewsKey(type,id)) || "[]"); }catch(e){ return []; }
+  }
+  function saveLocalReview(type, id, review){
+    const list = getLocalReviews(type, id);
+    list.unshift(review);
+    localStorage.setItem(reviewsKey(type,id), JSON.stringify(list));
+  }
+
+  /* ---------------- API helpers ---------------- */
+  // TMDb issues two kinds of credentials on the same settings page:
+  // - "API Key (v3 auth)": a short ~32-char hex string -> sent as ?api_key=...
+  // - "API Read Access Token (v4 auth)": a long JWT-like string -> sent as Authorization: Bearer ...
+  // We auto-detect which one was pasted so either works.
+  function isV4Token(key){
+    return key.length > 60 || key.split('.').length === 3;
+  }
+
+  async function tmdb(path, params){
+    const key = getApiKey();
+    if(!key){ throw new Error("NO_API_KEY"); }
+    const url = new URL(TMDB_API + path);
+    url.searchParams.set('language', 'id-ID');
+    Object.entries(params||{}).forEach(([k,v]) => url.searchParams.set(k, v));
+
+    const useBearer = isV4Token(key);
+    if(!useBearer) url.searchParams.set('api_key', key);
+
+    let res;
+    try{
+      res = await fetch(url.toString(), {
+        headers: useBearer ? { 'Authorization': `Bearer ${key}`, 'accept': 'application/json' } : {}
+      });
+    }catch(networkErr){
+      console.error('Movielio network/CORS error:', networkErr);
+      const e = new Error('NETWORK_ERROR');
+      e.cause = networkErr;
+      throw e;
+    }
+
+    if(!res.ok){
+      let detail = '';
+      try{ const body = await res.json(); detail = body.status_message || ''; }catch(e){ /* ignore */ }
+      console.error(`Movielio TMDb error ${res.status}:`, detail || '(no message)');
+      const e = new Error("TMDB_ERROR_" + res.status);
+      e.detail = detail;
+      throw e;
+    }
+    return res.json();
+  }
+
+  // The /videos endpoint filters results by the "language" param — since tmdb()
+  // defaults to id-ID and most official trailers are tagged "en" (or untagged),
+  // that default silently returns an empty list. Widen it here so trailers show up.
+  async function tmdbVideos(type, id){
+    return tmdb(`/${type}/${id}/videos`, {
+      language: 'en-US',
+      include_video_language: 'en,id,null'
+    });
+  }
+
+  // Quick check used right when the user saves a key, so mistakes surface immediately
+  // instead of silently failing later on the catalog page.
+  async function testApiKey(key){
+    const useBearer = isV4Token(key);
+    const url = new URL(TMDB_API + '/authentication');
+    if(!useBearer) url.searchParams.set('api_key', key);
+    try{
+      const res = await fetch(url.toString(), {
+        headers: useBearer ? { 'Authorization': `Bearer ${key}`, 'accept': 'application/json' } : {}
+      });
+      const body = await res.json().catch(() => ({}));
+      if(res.ok && body.success !== false) return { ok:true };
+      return { ok:false, message: body.status_message || `HTTP ${res.status}` };
+    }catch(err){
+      console.error('Movielio key test network/CORS error:', err);
+      return { ok:false, message: 'NETWORK' };
+    }
+  }
+
+  function imgUrl(path, size){
+    if(!path) return null;
+    return TMDB_IMG + (size||'w500') + path;
+  }
+
+  /* ---------------- Router ---------------- */
+  const app = document.getElementById('app');
+
+  function parseHash(){
+    const raw = location.hash.replace(/^#\/?/, '');
+    const [pathPart, queryPart] = raw.split('?');
+    const segs = pathPart.split('/').filter(Boolean);
+    const query = {};
+    if(queryPart){
+      queryPart.split('&').forEach(kv => {
+        const [k,v] = kv.split('=');
+        if(k) query[decodeURIComponent(k)] = decodeURIComponent(v||"");
+      });
+    }
+    return { segs, query };
+  }
+
+  async function router(){
+    const { segs, query } = parseHash();
+    window.scrollTo({top:0, behavior:'instant' in window ? 'instant' : 'auto'});
+    updateActiveNav(query.type || (segs[0]==='home' ? 'all' : ''));
+
+    // Static legal pages don't need TMDb data, so they work even before an API key is set.
+    if(segs[0] === 'privacy'){ renderPrivacyPage(); return; }
+    if(segs[0] === 'dmca'){ renderDmcaPage(); return; }
+
+    if(!getApiKey()){
+      renderNoApiKey();
+      return;
+    }
+
+    if(segs.length === 0 || segs[0] === 'home'){
+      renderHome(query);
+    } else if(segs[0] === 'detail' && segs[1] && segs[2]){
+      renderDetail(segs[1], segs[2]);
+    } else if(segs[0] === 'play' && segs[1] && segs[2]){
+      renderPlay(segs[1], segs[2]);
+    } else {
+      renderHome({});
+    }
+  }
+  window.addEventListener('hashchange', router);
+
+  function legalPageShell(eyebrow, title, bodyHtml){
+    return `
+      <div class="wrap page-top" style="padding-bottom:80px;">
+        <p class="eyebrow"><span class="dash"></span>${eyebrow}<span class="dash"></span></p>
+        <h1 class="page-title" style="margin-bottom:30px;">${title}</h1>
+        <div class="legal-body">${bodyHtml}</div>
+      </div>`;
+  }
+
+  function renderPrivacyPage(){
+    app.innerHTML = legalPageShell('Legal', 'Kebijakan Privasi', `
+      <p>Movielio menghargai privasi pengunjung. Halaman ini menjelaskan data apa saja yang diproses saat kamu menggunakan situs ini.</p>
+
+      <h2>Data dari TMDb</h2>
+      <p>Katalog film, series, gambar, sinopsis, dan review yang ditampilkan diambil langsung dari The Movie Database (TMDb) API melalui browser kamu sendiri. Movielio tidak menyimpan salinan data tersebut di server manapun, karena Movielio tidak memiliki server backend — seluruh halaman berjalan di sisi klien (browser).</p>
+
+      <h2>Kredensial API</h2>
+      <p>TMDb API Key atau Read Access Token yang kamu masukkan disimpan hanya di <code>localStorage</code> browser kamu sendiri. Kredensial ini tidak pernah dikirim ke pihak manapun selain langsung ke server resmi TMDb saat mengambil data.</p>
+
+      <h2>Review Pengguna</h2>
+      <p>Review yang kamu tulis melalui form di halaman detail disimpan secara lokal di <code>localStorage</code> browser kamu, dan hanya terlihat pada perangkat &amp; browser tempat review tersebut ditulis. Review ini tidak dikirim ke server Movielio manapun.</p>
+
+      <h2>Cookie &amp; Penyimpanan Lokal</h2>
+      <p>Movielio menggunakan <code>localStorage</code> (bukan cookie pelacak) untuk menyimpan preferensi teknis seperti API key, link affiliate, dan review lokal. Data ini bisa kamu hapus kapan saja lewat pengaturan browser.</p>
+
+      <h2>Tautan &amp; Mitra Pihak Ketiga</h2>
+      <p>Halaman play berisi tautan menuju mitra affiliate pihak ketiga. Movielio tidak bertanggung jawab atas kebijakan privasi situs mitra tersebut — silakan tinjau kebijakan privasi masing-masing situs setelah diarahkan ke sana.</p>
+
+      <h2>Perubahan Kebijakan</h2>
+      <p>Kebijakan ini dapat diperbarui sewaktu-waktu. Perubahan akan langsung berlaku begitu halaman ini dipublikasikan ulang.</p>
+    `);
+  }
+
+  function renderDmcaPage(){
+    app.innerHTML = legalPageShell('Legal', 'Kebijakan DMCA', `
+      <p>Movielio adalah situs katalog dan direktori informasi film &amp; TV series. Movielio tidak meng-hosting, menyimpan, atau menyediakan streaming file video film/series apa pun di server miliknya sendiri.</p>
+
+      <h2>Sumber Konten</h2>
+      <p>Data judul, poster, sinopsis, dan video pembuka yang ditampilkan bersumber dari TMDb API dan platform video pihak ketiga (mis. YouTube) untuk trailer/teaser resmi. Tautan "Tonton Film Penuh" pada halaman play mengarahkan pengunjung ke situs mitra affiliate pihak ketiga di luar kendali Movielio.</p>
+
+      <h2>Prosedur Pengajuan Keluhan DMCA</h2>
+      <p>Jika kamu adalah pemegang hak cipta atau perwakilan resmi yang meyakini ada konten pada situs mitra yang tertaut dari Movielio melanggar hak cipta, silakan hubungi mitra terkait secara langsung, karena Movielio tidak meng-hosting konten tersebut. Untuk keluhan terkait metadata (judul, gambar poster, sinopsis) yang ditampilkan dari TMDb, silakan hubungi TMDb melalui saluran resmi mereka.</p>
+
+      <h2>Informasi Kontak</h2>
+      <p>Untuk pertanyaan terkait konten yang ditampilkan langsung oleh Movielio (bukan milik mitra pihak ketiga), silakan hubungi kami melalui email yang tercantum di bagian kontak situs ini.</p>
+
+      <p style="color:var(--text-lo); font-size:0.8rem; margin-top:30px;">Catatan: teks ini adalah kerangka umum kebijakan DMCA. Sesuaikan dengan detail hukum, alamat, dan alamat email resmi milikmu sebelum dipublikasikan.</p>
+    `);
+  }
+
+  function updateActiveNav(type){
+    document.querySelectorAll('[data-nav]').forEach(a => a.classList.remove('active'));
+    const map = { all:'home', movie:'movie', tv:'tv', '':'home' };
+    const active = document.querySelector(`[data-nav="${map[type]||'home'}"]`);
+    if(active) active.classList.add('active');
+  }
+
+  function renderNoApiKey(){
+    app.innerHTML = `
+      <div class="page-top wrap">
+        <div class="status-msg" style="padding:100px 20px;">
+          <p style="font-size:15px; color:var(--text-hi); margin-bottom:10px; font-family:var(--font-display); letter-spacing:0.02em; text-transform:none;">TMDb API Key belum diatur</p>
+          <p style="max-width:420px; margin:0 auto 20px; line-height:1.7;">Klik ikon ⚙ di kanan atas untuk memasukkan TMDb API Key kamu. Data film &amp; series diambil langsung dari TMDb, jadi key wajib diisi dulu.</p>
+          <button class="btn-solid" onclick="document.getElementById('settingsBtn').click()">Buka Pengaturan</button>
+        </div>
+      </div>`;
+  }
+
+  /* ---------------- Home / Browse ---------------- */
+  let state = {
+    type: 'movie',      // movie | tv
+    sort: 'asc',        // asc (terlama) | desc (terbaru)
+    page: 1,
+    query: '',
+    results: [],
+    totalPages: 1,
+    loading: false
+  };
+
+  async function renderHome(routeQuery){
+    state.type = routeQuery.type === 'tv' ? 'tv' : (routeQuery.type === 'movie' ? 'movie' : state.type || 'movie');
+    state.page = 1;
+    state.results = [];
+    state.query = '';
+    document.getElementById('searchInput').value = '';
+
+    app.innerHTML = `
+      <div class="page-top wrap">
+        <p class="eyebrow"><span class="dash"></span>Trending<span class="dash"></span></p>
+        <h2 class="rail-title">Film Populer Bulan Ini</h2>
+        <div class="popular-rail" id="movieThisMonthRail"></div>
+
+        <h2 class="rail-title">Film Populer Bulan Lalu</h2>
+        <div class="popular-rail" id="movieLastMonthRail"></div>
+
+        <h2 class="rail-title">Series Terpopuler Bulan Ini</h2>
+        <div class="popular-rail" id="tvThisMonthRail"></div>
+
+        <h2 class="rail-title">Series Terpopuler Bulan Lalu</h2>
+        <div class="popular-rail" id="tvLastMonthRail"></div>
+      </div>
+
+      <div class="wrap">
+        <p class="eyebrow"><span class="dash"></span>Katalog<span class="dash"></span></p>
+        <h1 class="page-title">Jelajahi Film &amp; TV Series</h1>
+        <p class="page-sub">Data lengkap dari TMDb — urutkan dari rilis terlama hingga yang paling baru, atau sebaliknya.</p>
+
+        <div class="filter-bar">
+          <div class="seg" id="typeSeg">
+            <button data-val="movie" class="${state.type==='movie'?'active':''}">Film</button>
+            <button data-val="tv" class="${state.type==='tv'?'active':''}">Series</button>
+          </div>
+          <select id="sortSelect">
+            <option value="asc" ${state.sort==='asc'?'selected':''}>Terlama → Terbaru</option>
+            <option value="desc" ${state.sort==='desc'?'selected':''}>Terbaru → Terlama</option>
+          </select>
+          <div class="spacer"></div>
+          <div class="result-count" id="resultCount"></div>
+        </div>
+
+        <div class="grid" id="grid"></div>
+        <div class="load-more-wrap"><button class="btn-outline" id="loadMoreBtn">Muat Lebih Banyak</button></div>
+      </div>
+    `;
+
+    document.getElementById('typeSeg').addEventListener('click', (e) => {
+      const btn = e.target.closest('button'); if(!btn) return;
+      location.hash = `#/home?type=${btn.dataset.val}`;
+    });
+    document.getElementById('sortSelect').addEventListener('change', (e) => {
+      state.sort = e.target.value; state.page = 1; state.results = [];
+      loadResults(true);
+    });
+    document.getElementById('loadMoreBtn').addEventListener('click', () => {
+      state.page += 1; loadResults(false);
+    });
+
+    renderMonthRails('movie', 'movieThisMonthRail', 'movieLastMonthRail', 'primary_release_date');
+    renderMonthRails('tv', 'tvThisMonthRail', 'tvLastMonthRail', 'first_air_date');
+    renderSkeletons();
+    await loadResults(true);
+  }
+
+  function renderRailSkeleton(rail){
+    rail.innerHTML = Array.from({length:8}).map(() => `
+      <div class="pop-card">
+        <div class="pop-poster skel"></div>
+        <div class="meta"><div class="skel" style="height:11px;border-radius:4px;margin-bottom:6px;"></div></div>
+      </div>`).join('');
+  }
+
+  function renderRailItems(rail, items, type){
+    rail.innerHTML = items.map((item, i) => {
+      const title = item.title || item.name || 'Tanpa judul';
+      const poster = imgUrl(item.poster_path, 'w342');
+      const rating = item.vote_average ? item.vote_average.toFixed(1) : '—';
+      const date = item.release_date || item.first_air_date || '';
+      const year = date ? date.slice(0,4) : '—';
+      return `
+        <div class="pop-card" data-id="${item.id}">
+          <div class="pop-rank">${String(i+1).padStart(2,'0')}</div>
+          <div class="pop-poster">
+            ${poster ? `<img src="${poster}" alt="Poster ${escapeHtml(title)}" loading="lazy">` : `<div class="placeholder-poster">${escapeHtml(title)}</div>`}
+            <div class="scan"></div>
+            <div class="hud-frame"></div>
+            <div class="rating-chip">★ ${rating}</div>
+          </div>
+          <div class="meta">
+            <h3>${escapeHtml(title)}</h3>
+            <div class="year">${year}</div>
+          </div>
+        </div>`;
+    }).join('') || `<div class="status-msg" style="padding:30px 0;">Tidak ada data untuk periode ini.</div>`;
+    rail.querySelectorAll('.pop-card').forEach(el => {
+      el.addEventListener('click', () => { location.hash = `#/detail/${type}/${el.dataset.id}`; });
+    });
+  }
+
+  function ymd(d){ return d.toISOString().slice(0,10); }
+
+  // Generic "populer bulan ini / bulan lalu" rail pair, works for both movie and tv
+  // by discovering titles whose release/air date falls in the given month window,
+  // sorted by popularity.
+  async function renderMonthRails(type, thisElId, lastElId, dateField){
+    const now = new Date();
+    const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const thisMonthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0);
+
+    const thisRail = document.getElementById(thisElId);
+    const lastRail = document.getElementById(lastElId);
+    if(thisRail) renderRailSkeleton(thisRail);
+    if(lastRail) renderRailSkeleton(lastRail);
+
+    const fetchWindow = async (start, end) => {
+      const data = await tmdb(`/discover/${type}`, {
+        sort_by: 'popularity.desc',
+        [`${dateField}.gte`]: ymd(start),
+        [`${dateField}.lte`]: ymd(end)
+      });
+      return (data.results || []).slice(0, 12);
+    };
+
+    const label = type === 'movie' ? 'film' : 'series';
+
+    try{
+      const items = await fetchWindow(thisMonthStart, thisMonthEnd);
+      if(thisRail) renderRailItems(thisRail, items, type);
+    }catch(err){
+      if(thisRail) thisRail.innerHTML = `<div class="status-msg" style="padding:30px 0;">Gagal memuat ${label} bulan ini.</div>`;
+      console.error(`Movielio ${type} this-month rail error:`, err);
+    }
+
+    try{
+      const items = await fetchWindow(lastMonthStart, lastMonthEnd);
+      if(lastRail) renderRailItems(lastRail, items, type);
+    }catch(err){
+      if(lastRail) lastRail.innerHTML = `<div class="status-msg" style="padding:30px 0;">Gagal memuat ${label} bulan lalu.</div>`;
+      console.error(`Movielio ${type} last-month rail error:`, err);
+    }
+  }
+
+  function renderSkeletons(){
+    const grid = document.getElementById('grid');
+    if(!grid) return;
+    grid.innerHTML = Array.from({length:10}).map(() => `
+      <div class="card">
+        <div class="poster-wrap skel"></div>
+        <div class="meta"><div class="skel" style="height:12px;border-radius:4px;margin-bottom:6px;"></div><div class="skel" style="height:10px;width:40%;border-radius:4px;"></div></div>
+      </div>`).join('');
+  }
+
+  async function loadResults(replace){
+    const grid = document.getElementById('grid');
+    const loadMoreBtn = document.getElementById('loadMoreBtn');
+    if(!grid) return;
+    if(loadMoreBtn){ loadMoreBtn.disabled = true; loadMoreBtn.textContent = 'Memuat...'; }
+    if(replace) renderSkeletons();
+
+    try{
+      const sortField = state.type === 'movie' ? 'primary_release_date' : 'first_air_date';
+      const dateField = state.type === 'movie' ? 'primary_release_date.gte' : 'first_air_date.gte';
+      const params = {
+        sort_by: `${sortField}.${state.sort}`,
+        page: state.page,
+        [dateField]: '1950-01-01',
+        include_adult: 'false'
+      };
+      const data = state.query
+        ? await tmdb(`/search/${state.type}`, { query: state.query, page: state.page })
+        : await tmdb(`/discover/${state.type}`, params);
+
+      state.totalPages = data.total_pages || 1;
+      const items = (data.results || []).filter(it => it.poster_path || it.title || it.name);
+      state.results = replace ? items : state.results.concat(items);
+
+      grid.innerHTML = state.results.map(renderCard).join('') || `<div class="status-msg">Tidak ada hasil ditemukan.</div>`;
+      document.getElementById('resultCount').textContent = `${data.total_results ?? state.results.length} judul ditemukan`;
+      grid.querySelectorAll('.card').forEach(el => {
+        el.addEventListener('click', () => {
+          location.hash = `#/detail/${state.type}/${el.dataset.id}`;
+        });
+      });
+
+      if(loadMoreBtn){
+        loadMoreBtn.disabled = state.page >= state.totalPages;
+        loadMoreBtn.textContent = state.page >= state.totalPages ? 'Semua judul sudah dimuat' : 'Muat Lebih Banyak';
+      }
+    }catch(err){
+      handleApiError(err, grid);
+    }
+  }
+
+  function renderCard(item){
+    const title = item.title || item.name || 'Tanpa judul';
+    const date = item.release_date || item.first_air_date || '';
+    const year = date ? date.slice(0,4) : '—';
+    const rating = item.vote_average ? item.vote_average.toFixed(1) : '—';
+    const poster = imgUrl(item.poster_path, 'w342');
+    return `
+      <div class="card" data-id="${item.id}">
+        <div class="poster-wrap">
+          ${poster ? `<img src="${poster}" alt="Poster ${escapeHtml(title)}" loading="lazy">` : `<div class="placeholder-poster">${escapeHtml(title)}</div>`}
+          <div class="scan"></div>
+          <div class="hud-frame"></div>
+          <div class="type-chip">${state.type === 'movie' ? 'Film' : 'Series'}</div>
+          <div class="rating-chip">★ ${rating}</div>
+        </div>
+        <div class="meta">
+          <h3>${escapeHtml(title)}</h3>
+          <div class="year">${year}</div>
+        </div>
+      </div>`;
+  }
+
+  function escapeHtml(str){
+    return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  }
+
+  function handleApiError(err, targetEl){
+    if(String(err.message) === 'NO_API_KEY') { renderNoApiKey(); return; }
+
+    let msg = 'Terjadi kesalahan saat mengambil data dari TMDb.';
+    let detail = err.detail ? ` (${escapeHtml(err.detail)})` : '';
+
+    if(String(err.message).includes('401')){
+      msg = `API Key ditolak TMDb${detail}. Buka menu ⚙ Pengaturan dan periksa lagi — pastikan kamu menyalin "API Key (v3 auth)" atau "API Read Access Token (v4 auth)" secara utuh, tanpa spasi tambahan.`;
+    } else if(String(err.message).includes('404')){
+      msg = `Data tidak ditemukan di TMDb${detail}.`;
+    } else if(String(err.message).includes('429')){
+      msg = 'Terlalu banyak permintaan ke TMDb dalam waktu singkat. Coba lagi sebentar lagi.';
+    } else if(String(err.message) === 'NETWORK_ERROR'){
+      msg = 'Gagal terhubung ke TMDb. Ini biasanya karena koneksi internet terputus, atau ada ad-blocker/ekstensi browser yang memblokir permintaan ke api.themoviedb.org — coba nonaktifkan sementara lalu muat ulang halaman.';
+    } else if(detail){
+      msg += detail;
+    }
+
+    console.error('Movielio error detail:', err);
+    if(targetEl) targetEl.innerHTML = `<div class="status-msg" style="max-width:480px;margin:0 auto;">${msg}</div>`;
+  }
+
+  /* ---------------- Search ---------------- */
+  document.getElementById('searchForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const q = document.getElementById('searchInput').value.trim();
+    if(!q) return;
+    state.query = q; state.page = 1; state.results = [];
+    if(!location.hash.startsWith('#/home')) location.hash = '#/home';
+    loadResults(true);
+  });
+
+  /* ---------------- Detail page ---------------- */
+  async function renderDetail(type, id){
+    app.innerHTML = `<div class="status-msg" style="padding-top:180px;">Memuat detail...</div>`;
+    try{
+      const [details, credits, reviews, videos] = await Promise.all([
+        tmdb(`/${type}/${id}`, {}),
+        tmdb(`/${type}/${id}/credits`, {}),
+        tmdb(`/${type}/${id}/reviews`, {}),
+        tmdbVideos(type, id)
+      ]);
+
+      const title = details.title || details.name;
+      const date = details.release_date || details.first_air_date || '';
+      const year = date ? date.slice(0,4) : '—';
+      const runtime = type === 'movie'
+        ? (details.runtime ? `${details.runtime} menit` : '—')
+        : (details.episode_run_time && details.episode_run_time[0] ? `${details.episode_run_time[0]} menit/eps` : '—');
+      const backdrop = imgUrl(details.backdrop_path, 'w1280');
+      const poster = imgUrl(details.poster_path, 'w500');
+
+      app.innerHTML = `
+        <div class="backdrop-hero" style="background-image:${backdrop ? `url('${backdrop}')` : 'none'}; background-color:var(--bg-2);">
+          <div class="hero-grid"></div>
+          <div class="wrap hero-inner">
+            <div class="detail-poster">${poster ? `<img src="${poster}" alt="Poster ${escapeHtml(title)}">` : ''}</div>
+            <div class="detail-head">
+              <div class="type-tag"><span class="dash" style="width:20px;height:1px;background:var(--amber-dim);display:inline-block;"></span>${type==='movie'?'Film':'TV Series'} · ${year}</div>
+              <h1>${escapeHtml(title)}</h1>
+              ${details.tagline ? `<div class="tagline">"${escapeHtml(details.tagline)}"</div>` : ''}
+              <div class="detail-stats">
+                <div class="stat-box"><div class="val rating">★ ${details.vote_average ? details.vote_average.toFixed(1) : '—'}</div><div class="lbl">Rating</div></div>
+                <div class="stat-box"><div class="val">${year}</div><div class="lbl">Rilis</div></div>
+                <div class="stat-box"><div class="val">${runtime}</div><div class="lbl">Durasi</div></div>
+                <div class="stat-box"><div class="val">${details.vote_count ?? 0}</div><div class="lbl">Voter</div></div>
+              </div>
+              <div class="genre-row">${(details.genres||[]).map(g => `<span class="genre-chip">${escapeHtml(g.name)}</span>`).join('')}</div>
+              <div class="hero-cta">
+                <a class="btn-play" href="#/play/${type}/${id}">▶ Tonton Sekarang</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="wrap detail-body">
+          <div class="detail-grid">
+            <div>
+              <div class="block-title">Sinopsis</div>
+              <p class="overview-text">${escapeHtml(details.overview || 'Sinopsis belum tersedia untuk judul ini.')}</p>
+
+              <div class="block-title">Pemeran</div>
+              <div class="cast-row">
+                ${(credits.cast||[]).slice(0,12).map(c => `
+                  <div class="cast-item">
+                    <div class="ph">${c.profile_path ? `<img src="${imgUrl(c.profile_path,'w185')}" alt="${escapeHtml(c.name)}">` : ''}</div>
+                    <div class="nm">${escapeHtml(c.name)}</div>
+                    <div class="rl">${escapeHtml(c.character || '')}</div>
+                  </div>`).join('') || '<p class="overview-text">Data pemeran tidak tersedia.</p>'}
+              </div>
+
+              <div class="block-title" id="reviewsTitle">Review</div>
+              <div id="reviewList"></div>
+
+              <div class="review-form">
+                <div class="block-title" style="margin-bottom:12px;">Tulis Review Kamu</div>
+                <input type="text" id="reviewName" placeholder="Nama kamu">
+                <div class="star-row" id="starRow">
+                  ${[1,2,3,4,5].map(n => `<button type="button" data-star="${n}">★</button>`).join('')}
+                </div>
+                <textarea id="reviewText" placeholder="Bagikan pendapatmu tentang ${escapeHtml(title)}..."></textarea>
+                <button class="btn-solid" id="submitReview">Kirim Review</button>
+              </div>
+            </div>
+
+            <div class="side-panel">
+              <div class="side-row"><div class="k">Status</div><div class="v">${escapeHtml(details.status || '—')}</div></div>
+              <div class="side-row"><div class="k">Bahasa Asli</div><div class="v">${(details.original_language||'—').toUpperCase()}</div></div>
+              ${type==='tv' ? `<div class="side-row"><div class="k">Jumlah Season</div><div class="v">${details.number_of_seasons ?? '—'}</div></div>
+              <div class="side-row"><div class="k">Jumlah Episode</div><div class="v">${details.number_of_episodes ?? '—'}</div></div>` : ''}
+              <div class="side-row"><div class="k">Produksi</div><div class="v">${(details.production_companies||[]).slice(0,2).map(p=>escapeHtml(p.name)).join(', ') || '—'}</div></div>
+              ${type==='movie' && details.budget ? `<div class="side-row"><div class="k">Budget</div><div class="v">$${(details.budget||0).toLocaleString()}</div></div>` : ''}
+            </div>
+          </div>
+        </div>
+      `;
+
+      renderReviews(type, id, reviews.results || []);
+
+      let selectedStar = 0;
+      document.getElementById('starRow').addEventListener('click', (e) => {
+        const btn = e.target.closest('button'); if(!btn) return;
+        selectedStar = Number(btn.dataset.star);
+        document.querySelectorAll('#starRow button').forEach(b => b.classList.toggle('on', Number(b.dataset.star) <= selectedStar));
+      });
+      document.getElementById('submitReview').addEventListener('click', () => {
+        const name = document.getElementById('reviewName').value.trim() || 'Anonim';
+        const text = document.getElementById('reviewText').value.trim();
+        if(!text){ alert('Tulis review terlebih dahulu ya.'); return; }
+        saveLocalReview(type, id, { author: name, content: text, rating: selectedStar || null, ts: Date.now(), local: true });
+        document.getElementById('reviewText').value = '';
+        document.getElementById('reviewName').value = '';
+        selectedStar = 0;
+        document.querySelectorAll('#starRow button').forEach(b => b.classList.remove('on'));
+        renderReviews(type, id, reviews.results || []);
+      });
+
+    }catch(err){
+      handleApiError(err, app);
+    }
+  }
+
+  function renderReviews(type, id, tmdbReviews){
+    const list = document.getElementById('reviewList');
+    if(!list) return;
+    const local = getLocalReviews(type, id);
+    const localHtml = local.map(r => `
+      <div class="review-card">
+        <div class="review-head">
+          <div class="review-author"><span class="av">${escapeHtml((r.author||'A')[0].toUpperCase())}</span>${escapeHtml(r.author)}</div>
+          <span class="review-badge">Review Pengguna</span>
+        </div>
+        ${r.rating ? `<div class="review-rating">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</div>` : ''}
+        <p class="review-text" style="margin-top:8px;">${escapeHtml(r.content)}</p>
+      </div>`).join('');
+
+    const tmdbHtml = (tmdbReviews||[]).slice(0,8).map(r => `
+      <div class="review-card">
+        <div class="review-head">
+          <div class="review-author"><span class="av">${escapeHtml((r.author||'A')[0].toUpperCase())}</span>${escapeHtml(r.author)}</div>
+          <span class="review-badge">TMDb</span>
+        </div>
+        ${r.author_details && r.author_details.rating ? `<div class="review-rating">★ ${r.author_details.rating}/10</div>` : ''}
+        <p class="review-text" style="margin-top:8px;">${escapeHtml((r.content||'').slice(0,420))}${(r.content||'').length>420 ? '…' : ''}</p>
+      </div>`).join('');
+
+    list.innerHTML = (localHtml + tmdbHtml) || `<p class="overview-text">Belum ada review untuk judul ini. Jadilah yang pertama menulis!</p>`;
+  }
+
+  /* ---------------- Play page ---------------- */
+  let ytPlayer = null;
+  let ytApiLoading = null;
+
+  function loadYouTubeApi(){
+    if(window.YT && window.YT.Player) return Promise.resolve();
+    if(ytApiLoading) return ytApiLoading;
+    ytApiLoading = new Promise((resolve) => {
+      const tag = document.createElement('script');
+      tag.src = "https://www.youtube.com/iframe_api";
+      window.onYouTubeIframeAPIReady = () => resolve();
+      document.head.appendChild(tag);
+    });
+    return ytApiLoading;
+  }
+
+  async function renderPlay(type, id){
+    app.innerHTML = `<div class="status-msg" style="padding-top:180px;">Memuat...</div>`;
+    try{
+      const [details, videos] = await Promise.all([
+        tmdb(`/${type}/${id}`, {}),
+        tmdbVideos(type, id)
+      ]);
+      const title = details.title || details.name;
+      const backdrop = imgUrl(details.backdrop_path, 'w1280') || imgUrl(details.poster_path, 'w780');
+      const trailer = (videos.results || []).find(v => v.site === 'YouTube' && v.type === 'Trailer')
+        || (videos.results || []).find(v => v.site === 'YouTube' && v.type === 'Teaser')
+        || (videos.results || []).find(v => v.site === 'YouTube');
+      console.log('Movielio: video results for', type, id, '→', videos.results, '| dipakai:', trailer);
+      const affiliateLink = getAffiliate();
+
+      app.innerHTML = `
+        <div class="wrap" style="padding-top:100px;">
+          <p class="eyebrow"><span class="dash"></span>${type==='movie'?'Film':'Series'}<span class="dash"></span></p>
+          ${location.protocol === 'file:' ? `
+            <div style="border:1px solid rgba(224,113,107,0.4); background:rgba(224,113,107,0.08); border-radius:10px; padding:14px 16px; margin-bottom:18px; font-size:0.82rem; color:#e0716b; line-height:1.6;">
+              ⚠ Halaman ini dibuka langsung dari file (<code>file://</code>). YouTube menolak memutar video pada mode ini (Error 153). Jalankan lewat local server (mis. <code>python3 -m http.server</code> lalu buka <code>http://localhost:8000</code>) atau upload ke hosting agar video pembuka bisa diputar.
+            </div>` : ''}
+        </div>
+        <div class="play-hero" id="playHero">
+          <div class="bg-poster" style="background-image:url('${backdrop||''}')"></div>
+          <div class="bg-shade"></div>
+          <div class="play-overlay" id="playOverlay">
+            <button class="big-play-btn" id="playBtn" aria-label="Putar trailer">▶</button>
+            <div class="play-title-tag">${escapeHtml(title)}</div>
+            <div class="play-hint">${trailer ? 'Klik untuk memutar video pembuka' : 'Video pembuka tidak tersedia — lanjut ke mitra tayang'}</div>
+          </div>
+          <div class="affiliate-cta-overlay" id="affiliateOverlay">
+            <div class="play-title-tag">${escapeHtml(title)}</div>
+            <p class="note">Video pembuka telah selesai. Movielio tidak menyediakan streaming film penuh — klik tombol di bawah untuk melanjutkan ke mitra tayang pihak ketiga.</p>
+            <a class="btn-affiliate" href="${affiliateLink}" target="_blank" rel="noopener nofollow sponsored" id="affiliateBtn">▶ Tonton Film Penuh di Mitra Kami</a>
+            <a class="skip-link" href="#/detail/${type}/${id}">Kembali ke halaman detail</a>
+          </div>
+        </div>
+        <div class="wrap play-info">
+          <p class="tag-line">${escapeHtml((details.overview||'').slice(0,260))}${(details.overview||'').length>260?'…':''}</p>
+        </div>
+      `;
+
+      const playBtn = document.getElementById('playBtn');
+      const playOverlay = document.getElementById('playOverlay');
+      const affiliateOverlay = document.getElementById('affiliateOverlay');
+      const playHero = document.getElementById('playHero');
+      const OPENING_CLIP_SECONDS = 6;
+      let clipTimer = null;
+
+      function showAffiliateOverlay(){
+        if(clipTimer){ clearTimeout(clipTimer); clipTimer = null; }
+        if(ytPlayer && typeof ytPlayer.pauseVideo === 'function'){
+          try{ ytPlayer.pauseVideo(); }catch(e){ /* ignore */ }
+        }
+        affiliateOverlay.classList.add('show');
+      }
+
+      // YouTube error codes: 2=invalid id, 5=HTML5 player error, 100=video not found/private,
+      // 101/150=embedding disabled by uploader, 153=origin/config rejected (very commonly caused
+      // by opening this file directly via file:// instead of a real http(s) server).
+      function handleYtError(code){
+        console.error('Movielio: YouTube player error code', code);
+        const iframeDiv = document.getElementById('ytPlayer');
+        if(iframeDiv) iframeDiv.style.display = 'none';
+        if(location.protocol === 'file:'){
+          playHero.insertAdjacentHTML('beforeend', `
+            <div class="affiliate-cta-overlay show" style="z-index:6;">
+              <div class="play-title-tag">Video pembuka tidak bisa diputar</div>
+              <p class="note">Error ${code} dari YouTube: halaman ini dibuka langsung dari file (file://), sementara YouTube mewajibkan halaman disajikan lewat server web (http:// atau https://) agar video bisa di-embed. Jalankan file ini lewat local server (mis. <code>python3 -m http.server</code>, Live Server di VS Code, atau upload ke hosting) lalu buka lagi via http://.</p>
+              <a class="btn-affiliate" href="${affiliateLink}" target="_blank" rel="noopener nofollow sponsored">▶ Tonton Film Penuh di Mitra Kami</a>
+              <a class="skip-link" href="#/detail/${type}/${id}">Kembali ke halaman detail</a>
+            </div>`);
+        } else {
+          showAffiliateOverlay();
+        }
+      }
+
+      playBtn.addEventListener('click', async () => {
+        if(!trailer){
+          showAffiliateOverlay();
+          playOverlay.style.display = 'none';
+          return;
+        }
+        playOverlay.style.display = 'none';
+        const iframeDiv = document.createElement('div');
+        iframeDiv.id = 'ytPlayer';
+        iframeDiv.style.position = 'absolute';
+        iframeDiv.style.inset = '0';
+        iframeDiv.style.zIndex = '2';
+        playHero.querySelector('.bg-shade').insertAdjacentElement('afterend', iframeDiv);
+
+        await loadYouTubeApi();
+        let clipStarted = false;
+        ytPlayer = new YT.Player('ytPlayer', {
+          videoId: trailer.key,
+          playerVars: {
+            autoplay: 1, controls: 0, disablekb: 1, rel: 0, modestbranding: 1,
+            origin: location.protocol === 'file:' ? undefined : window.location.origin
+          },
+          events: {
+            onStateChange: (e) => {
+              if(e.data === YT.PlayerState.PLAYING && !clipStarted){
+                // Video pembuka diputar selama beberapa detik saja, lalu lanjut ke CTA affiliate.
+                clipStarted = true;
+                clipTimer = setTimeout(showAffiliateOverlay, OPENING_CLIP_SECONDS * 1000);
+              }
+              if(e.data === YT.PlayerState.ENDED){
+                // Fallback kalau video pembuka lebih pendek dari durasi yang ditentukan.
+                showAffiliateOverlay();
+              }
+            },
+            onError: (e) => handleYtError(e.data)
+          }
+        });
+      });
+
+    }catch(err){
+      handleApiError(err, app);
+    }
+  }
+
+  /* ---------------- Settings modal wiring ---------------- */
+  const settingsModal = document.getElementById('settingsModal');
+  document.getElementById('settingsBtn').addEventListener('click', () => {
+    document.getElementById('apiKeyInput').value = getApiKey();
+    document.getElementById('affiliateLinkInput').value = getAffiliate() === DEFAULT_AFFILIATE ? '' : getAffiliate();
+    settingsModal.classList.add('open');
+  });
+  document.getElementById('settingsCancel').addEventListener('click', () => settingsModal.classList.remove('open'));
+  settingsModal.addEventListener('click', (e) => { if(e.target === settingsModal) settingsModal.classList.remove('open'); });
+  document.getElementById('settingsSave').addEventListener('click', async () => {
+    const statusEl = document.getElementById('apiKeyStatus');
+    const saveBtn = document.getElementById('settingsSave');
+    const key = document.getElementById('apiKeyInput').value.trim();
+
+    if(!key){
+      statusEl.style.color = '#e0716b';
+      statusEl.textContent = 'Isi API Key atau Read Access Token terlebih dahulu.';
+      return;
+    }
+
+    saveBtn.disabled = true; saveBtn.textContent = 'Memeriksa...';
+    statusEl.style.color = 'var(--text-lo)';
+    statusEl.textContent = 'Menghubungi TMDb untuk memverifikasi key...';
+
+    const result = await testApiKey(key);
+    saveBtn.disabled = false; saveBtn.textContent = 'Simpan & Cek';
+
+    if(!result.ok){
+      statusEl.style.color = '#e0716b';
+      statusEl.textContent = result.message === 'NETWORK'
+        ? 'Gagal terhubung ke TMDb (cek koneksi internet / ad-blocker).'
+        : `Key ditolak TMDb: ${result.message}`;
+      return; // don't save/close on a bad key — let the user fix it first
+    }
+
+    statusEl.style.color = '#5fd48a';
+    statusEl.textContent = 'Key valid ✓ Tersimpan.';
+    setApiKey(key);
+    setAffiliate(document.getElementById('affiliateLinkInput').value.trim());
+    setTimeout(() => {
+      settingsModal.classList.remove('open');
+      router();
+    }, 500);
+  });
+
+  /* ---------------- Init ---------------- */
+  if(!location.hash) location.hash = '#/home';
+  router();
+
+})();
+</script>
+</body>
+</html>
