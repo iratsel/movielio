@@ -387,7 +387,6 @@
       <input type="text" id="searchInput" data-i18n-placeholder="searchPlaceholder" placeholder="Cari film atau series...">
     </form>
     <button class="icon-btn" id="langBtn" aria-label="Switch language" style="font-family:var(--font-mono); font-size:11px; font-weight:600;">ID</button>
-    <button class="icon-btn" id="settingsBtn" data-i18n-title="settingsBtnTitle" title="Pengaturan API Key" aria-label="Pengaturan API Key">⚙</button>
   </nav>
 </header>
 
@@ -405,23 +404,6 @@
     </div>
   </div>
 </footer>
-
-<div class="modal-overlay" id="settingsModal">
-  <div class="modal">
-    <h2 data-i18n="settingsTitle">Pengaturan TMDb API</h2>
-    <p data-i18n="settingsDesc">Movielio butuh kredensial TMDb untuk mengambil data film &amp; series. Terima "API Key (v3 auth)" ATAU "API Read Access Token (v4 auth)" — keduanya bisa didapat di halaman yang sama. Disimpan hanya di browser kamu sendiri (localStorage), tidak dikirim ke server manapun selain TMDb.</p>
-    <label for="apiKeyInput" data-i18n="apiKeyLabel">TMDb API Key / Read Access Token</label>
-    <input type="text" id="apiKeyInput" data-i18n-placeholder="apiKeyPlaceholder" placeholder="contoh: 3fd2be6f0c70a2a598f084ddfb75487c">
-    <div id="apiKeyStatus" style="font-family:var(--font-mono); font-size:11px; margin:-8px 0 14px; min-height:16px;"></div>
-    <label for="affiliateLinkInput" data-i18n="affiliateLabel">Link Affiliate (default, opsional)</label>
-    <input type="text" id="affiliateLinkInput" data-i18n-placeholder="affiliatePlaceholder" placeholder="https://link-affiliate-kamu.example.com">
-    <div class="modal-actions">
-      <a class="api-link" href="https://www.themoviedb.org/settings/api" target="_blank" rel="noopener" style="margin-right:auto; align-self:center;" data-i18n="getApiKeyLink">Dapatkan API Key →</a>
-      <button class="btn-text" id="settingsCancel" data-i18n="cancelBtn">Batal</button>
-      <button class="btn-solid" id="settingsSave" data-i18n="saveCheckBtn">Simpan &amp; Cek</button>
-    </div>
-  </div>
-</div>
 
 <script>
 (function(){
@@ -476,30 +458,11 @@
     navMovies: { id:'Film', en:'Movies' },
     navSeries: { id:'Series', en:'Series' },
     searchPlaceholder: { id:'Cari film atau series...', en:'Search movies or series...' },
-    settingsBtnTitle: { id:'Pengaturan API Key', en:'API Key Settings' },
     langToggleTitle: { id:'Ganti ke Bahasa Inggris', en:'Switch to Indonesian' },
 
-    settingsTitle: { id:'Pengaturan TMDb API', en:'TMDb API Settings' },
-    settingsDesc: { id:'Movielio butuh kredensial TMDb untuk mengambil data film & series. Terima "API Key (v3 auth)" ATAU "API Read Access Token (v4 auth)" — keduanya bisa didapat di halaman yang sama. Disimpan hanya di browser kamu sendiri (localStorage), tidak dikirim ke server manapun selain TMDb.',
-      en:'Movielio needs TMDb credentials to fetch movie & series data. Either "API Key (v3 auth)" OR "API Read Access Token (v4 auth)" works — both are available on the same page. Stored only in your own browser (localStorage), never sent anywhere except directly to TMDb.' },
-    apiKeyLabel: { id:'TMDb API Key / Read Access Token', en:'TMDb API Key / Read Access Token' },
-    apiKeyPlaceholder: { id:'contoh: 3fd2be6f0c70a2a598f084ddfb75487c', en:'e.g. 3fd2be6f0c70a2a598f084ddfb75487c' },
-    affiliateLabel: { id:'Link Affiliate (default, opsional)', en:'Affiliate Link (default, optional)' },
-    affiliatePlaceholder: { id:'https://link-affiliate-kamu.example.com', en:'https://your-affiliate-link.example.com' },
-    getApiKeyLink: { id:'Dapatkan API Key →', en:'Get API Key →' },
-    cancelBtn: { id:'Batal', en:'Cancel' },
-    saveCheckBtn: { id:'Simpan & Cek', en:'Save & Check' },
-    checkingBtn: { id:'Memeriksa...', en:'Checking...' },
-    fillKeyFirst: { id:'Isi API Key atau Read Access Token terlebih dahulu.', en:'Please enter an API Key or Read Access Token first.' },
-    checkingMsg: { id:'Menghubungi TMDb untuk memverifikasi key...', en:'Contacting TMDb to verify the key...' },
-    keyValidMsg: { id:'Key valid ✓ Tersimpan.', en:'Key valid ✓ Saved.' },
-    keyRejectedPrefix: { id:'Key ditolak TMDb:', en:'Key rejected by TMDb:' },
-    keyNetworkErrorMsg: { id:'Gagal terhubung ke TMDb (cek koneksi internet / ad-blocker).', en:'Could not connect to TMDb (check your internet connection / ad-blocker).' },
-
-    noKeyTitle: { id:'TMDb API Key belum diatur', en:'TMDb API Key not set yet' },
-    noKeyDesc: { id:'Klik ikon ⚙ di kanan atas untuk memasukkan TMDb API Key kamu. Data film & series diambil langsung dari TMDb, jadi key wajib diisi dulu.',
-      en:'Click the ⚙ icon in the top right to enter your TMDb API Key. Movie & series data is fetched directly from TMDb, so a key is required first.' },
-    openSettingsBtn: { id:'Buka Pengaturan', en:'Open Settings' },
+    noKeyTitle: { id:'Situs belum dikonfigurasi', en:'Site not configured yet' },
+    noKeyDesc: { id:'TMDb API Key belum diisi di kode sumber situs ini. Pemilik situs perlu mengisi TMDB_API_KEY (atau TMDB_PROXY_URL) di bagian atas file sebelum halaman ini bisa menampilkan data film & series.',
+      en:'The TMDb API Key has not been set in the source code of this site yet. The site owner needs to fill in TMDB_API_KEY (or TMDB_PROXY_URL) near the top of the file before this page can display movie & series data.' },
 
     trendingEyebrow: { id:'Trending', en:'Trending' },
     railMovieThisMonth: { id:'Film Populer Bulan Ini', en:'Popular Movies This Month' },
@@ -603,20 +566,25 @@
   }
 
   async function tmdb(path, params){
-    const key = getApiKey();
-    if(!key){ throw new Error("NO_API_KEY"); }
     const url = new URL(TMDB_API + path);
     url.searchParams.set('language', getLang() === 'en' ? 'en-US' : 'id-ID');
     Object.entries(params||{}).forEach(([k,v]) => url.searchParams.set(k, v));
 
-    const useBearer = isV4Token(key);
-    if(!useBearer) url.searchParams.set('api_key', key);
+    // When TMDB_PROXY_URL is set, the proxy itself holds and attaches the real
+    // TMDb credential server-side — this page never sends it, so it's not
+    // present anywhere in the browser (source, DevTools, or Network tab).
+    let headers = {};
+    if(!USING_PROXY){
+      const key = TMDB_API_KEY;
+      if(!key || key === 'PASTE_YOUR_TMDB_API_KEY_OR_READ_ACCESS_TOKEN_HERE'){ throw new Error("NO_API_KEY"); }
+      const useBearer = isV4Token(key);
+      if(useBearer) headers = { 'Authorization': `Bearer ${key}`, 'accept': 'application/json' };
+      else url.searchParams.set('api_key', key);
+    }
 
     let res;
     try{
-      res = await fetch(url.toString(), {
-        headers: useBearer ? { 'Authorization': `Bearer ${key}`, 'accept': 'application/json' } : {}
-      });
+      res = await fetch(url.toString(), { headers });
     }catch(networkErr){
       console.error('Movielio network/CORS error:', networkErr);
       const e = new Error('NETWORK_ERROR');
@@ -643,25 +611,6 @@
       language: 'en-US',
       include_video_language: 'en,id,null'
     });
-  }
-
-  // Quick check used right when the user saves a key, so mistakes surface immediately
-  // instead of silently failing later on the catalog page.
-  async function testApiKey(key){
-    const useBearer = isV4Token(key);
-    const url = new URL(TMDB_API + '/authentication');
-    if(!useBearer) url.searchParams.set('api_key', key);
-    try{
-      const res = await fetch(url.toString(), {
-        headers: useBearer ? { 'Authorization': `Bearer ${key}`, 'accept': 'application/json' } : {}
-      });
-      const body = await res.json().catch(() => ({}));
-      if(res.ok && body.success !== false) return { ok:true };
-      return { ok:false, message: body.status_message || `HTTP ${res.status}` };
-    }catch(err){
-      console.error('Movielio key test network/CORS error:', err);
-      return { ok:false, message: 'NETWORK' };
-    }
   }
 
   function imgUrl(path, size){
@@ -695,7 +644,8 @@
     if(segs[0] === 'privacy'){ renderPrivacyPage(); return; }
     if(segs[0] === 'dmca'){ renderDmcaPage(); return; }
 
-    if(!getApiKey()){
+    const notConfigured = !USING_PROXY && (!TMDB_API_KEY || TMDB_API_KEY === 'PASTE_YOUR_TMDB_API_KEY_OR_READ_ACCESS_TOKEN_HERE');
+    if(notConfigured){
       renderNoApiKey();
       return;
     }
@@ -809,8 +759,7 @@
       <div class="page-top wrap">
         <div class="status-msg" style="padding:100px 20px;">
           <p style="font-size:15px; color:var(--text-hi); margin-bottom:10px; font-family:var(--font-display); letter-spacing:0.02em; text-transform:none;">${t('noKeyTitle')}</p>
-          <p style="max-width:420px; margin:0 auto 20px; line-height:1.7;">${t('noKeyDesc')}</p>
-          <button class="btn-solid" onclick="document.getElementById('settingsBtn').click()">${t('openSettingsBtn')}</button>
+          <p style="max-width:460px; margin:0 auto; line-height:1.7;">${t('noKeyDesc')}</p>
         </div>
       </div>`;
   }
@@ -1356,51 +1305,6 @@
       handleApiError(err, app);
     }
   }
-
-  /* ---------------- Settings modal wiring ---------------- */
-  const settingsModal = document.getElementById('settingsModal');
-  document.getElementById('settingsBtn').addEventListener('click', () => {
-    document.getElementById('apiKeyInput').value = getApiKey();
-    document.getElementById('affiliateLinkInput').value = getAffiliate() === DEFAULT_AFFILIATE ? '' : getAffiliate();
-    settingsModal.classList.add('open');
-  });
-  document.getElementById('settingsCancel').addEventListener('click', () => settingsModal.classList.remove('open'));
-  settingsModal.addEventListener('click', (e) => { if(e.target === settingsModal) settingsModal.classList.remove('open'); });
-  document.getElementById('settingsSave').addEventListener('click', async () => {
-    const statusEl = document.getElementById('apiKeyStatus');
-    const saveBtn = document.getElementById('settingsSave');
-    const key = document.getElementById('apiKeyInput').value.trim();
-
-    if(!key){
-      statusEl.style.color = '#e0716b';
-      statusEl.textContent = t('fillKeyFirst');
-      return;
-    }
-
-    saveBtn.disabled = true; saveBtn.textContent = t('checkingBtn');
-    statusEl.style.color = 'var(--text-lo)';
-    statusEl.textContent = t('checkingMsg');
-
-    const result = await testApiKey(key);
-    saveBtn.disabled = false; saveBtn.textContent = t('saveCheckBtn');
-
-    if(!result.ok){
-      statusEl.style.color = '#e0716b';
-      statusEl.textContent = result.message === 'NETWORK'
-        ? t('keyNetworkErrorMsg')
-        : `${t('keyRejectedPrefix')} ${result.message}`;
-      return; // don't save/close on a bad key — let the user fix it first
-    }
-
-    statusEl.style.color = '#5fd48a';
-    statusEl.textContent = t('keyValidMsg');
-    setApiKey(key);
-    setAffiliate(document.getElementById('affiliateLinkInput').value.trim());
-    setTimeout(() => {
-      settingsModal.classList.remove('open');
-      router();
-    }, 500);
-  });
 
   /* ---------------- Language toggle ---------------- */
   function applyStaticI18n(){
