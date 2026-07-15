@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -327,6 +327,14 @@
   .play-hero .bg-poster{position:absolute; inset:0; background-size:cover; background-position:center; filter:brightness(.55);}
   .play-hero .bg-shade{position:absolute; inset:0; background:linear-gradient(0deg, var(--bg) 0%, transparent 30%, rgba(7,8,10,0.3) 100%);}
   .play-hero iframe, .play-hero video{position:absolute; inset:0; width:100%; height:100%; border:none; z-index:2;}
+  .yt-brand-cover{
+    position:absolute; bottom:14px; right:14px; z-index:3; pointer-events:none;
+    display:flex; align-items:center; gap:7px; padding:7px 12px; border-radius:999px;
+    background:rgba(7,8,10,0.72); backdrop-filter:blur(6px); border:1px solid var(--border);
+    font-family:var(--font-display); font-size:0.82rem; font-weight:600; color:var(--text-hi); letter-spacing:0.01em;
+  }
+  .yt-brand-cover .dot{width:6px; height:6px; border-radius:50%; background:var(--amber); box-shadow:0 0 8px var(--amber);}
+  .yt-brand-cover b{color:var(--cyan);}
   .play-overlay{
     position:absolute; inset:0; z-index:3; display:flex; flex-direction:column; align-items:center; justify-content:center;
     text-align:center; padding:20px; gap:20px;
@@ -439,7 +447,7 @@
   function getApiKey(){ return USING_PROXY ? "proxy" : TMDB_API_KEY; }
   function getAffiliate(){ return AFFILIATE_LINK; }
 
-  function getLang(){ return localStorage.getItem('movielio_lang') || 'id'; }
+  function getLang(){ return localStorage.getItem('movielio_lang') || 'en'; }
   function setLang(l){ localStorage.setItem('movielio_lang', l); }
 
   function reviewsKey(type, id){ return `movielio_reviews_${type}_${id}`; }
@@ -782,8 +790,10 @@
     state.query = '';
     document.getElementById('searchInput').value = '';
 
+    const hideRails = state.query || state.type === 'tv';
+
     app.innerHTML = `
-      <div class="page-top wrap" id="popularRailsSection" style="${state.query ? 'display:none;' : ''}">
+      <div class="page-top wrap" id="popularRailsSection" style="${hideRails ? 'display:none;' : ''}">
         <p class="eyebrow"><span class="dash"></span>${t('trendingEyebrow')}<span class="dash"></span></p>
         <h2 class="rail-title">${t('railMovieThisMonth')}</h2>
         <div class="popular-rail" id="movieThisMonthRail"></div>
@@ -833,7 +843,7 @@
       state.page += 1; loadResults(false);
     });
 
-    if(!state.query){
+    if(!hideRails){
       renderMonthRails('movie', 'movieThisMonthRail', 'movieLastMonthRail', 'primary_release_date');
       renderMonthRails('tv', 'tvThisMonthRail', 'tvLastMonthRail', 'first_air_date');
     }
@@ -1275,6 +1285,14 @@
         iframeDiv.style.inset = '0';
         iframeDiv.style.zIndex = '2';
         playHero.querySelector('.bg-shade').insertAdjacentElement('afterend', iframeDiv);
+
+        // YouTube shows its own watermark/logo in the player corners (controls:0 and
+        // modestbranding no longer fully suppress it) — cover it with the Movielio
+        // mark so it reads as our own player rather than an embedded YouTube video.
+        const brandBadge = document.createElement('div');
+        brandBadge.className = 'yt-brand-cover';
+        brandBadge.innerHTML = `<span class="dot"></span>Movie<b>lio</b>`;
+        iframeDiv.insertAdjacentElement('afterend', brandBadge);
 
         await loadYouTubeApi();
         let clipStarted = false;
