@@ -81,6 +81,12 @@
     background:none; border:none; outline:none; color:var(--text-hi); font-size:13px; width:100%; font-family:var(--font-body);
   }
   .search-box input::placeholder{color:var(--text-lo);}
+  .search-type-select{
+    background:var(--bg); border:1px solid var(--border); color:var(--text-mid); font-size:11px;
+    padding:6px 8px; border-radius:999px; font-family:var(--font-mono); letter-spacing:0.03em; outline:none;
+    flex-shrink:0; cursor:pointer;
+  }
+  .search-type-select:hover, .search-type-select:focus{color:var(--text-hi); border-color:var(--cyan-dim);}
   .icon-btn{
     width:36px; height:36px; border-radius:50%; border:1px solid var(--border); background:var(--bg-3);
     display:flex; align-items:center; justify-content:center; color:var(--text-mid); font-size:14px; transition:all .2s ease;
@@ -328,13 +334,14 @@
   .play-hero .bg-shade{position:absolute; inset:0; background:linear-gradient(0deg, var(--bg) 0%, transparent 30%, rgba(7,8,10,0.3) 100%);}
   .play-hero iframe, .play-hero video{position:absolute; inset:0; width:100%; height:100%; border:none; z-index:2;}
   .yt-brand-cover{
-    position:absolute; bottom:14px; right:14px; z-index:3; pointer-events:none;
-    display:flex; align-items:center; gap:7px; padding:7px 12px; border-radius:999px;
+    position:absolute; bottom:20px; right:20px; z-index:3; pointer-events:none;
+    display:flex; align-items:center; gap:21px; padding:21px 36px; border-radius:999px;
     background:rgba(7,8,10,0.72); backdrop-filter:blur(6px); border:1px solid var(--border);
-    font-family:var(--font-display); font-size:0.82rem; font-weight:600; color:var(--text-hi); letter-spacing:0.01em;
+    font-family:var(--font-display); font-size:2.46rem; font-weight:600; color:var(--text-hi); letter-spacing:0.01em;
   }
-  .yt-brand-cover .dot{width:6px; height:6px; border-radius:50%; background:var(--amber); box-shadow:0 0 8px var(--amber);}
+  .yt-brand-cover .dot{width:18px; height:18px; border-radius:50%; background:var(--amber); box-shadow:0 0 24px var(--amber);}
   .yt-brand-cover b{color:var(--cyan);}
+  @media (max-width:640px){ .yt-brand-cover{ transform:scale(0.5); transform-origin:bottom right; } }
   .play-overlay{
     position:absolute; inset:0; z-index:3; display:flex; flex-direction:column; align-items:center; justify-content:center;
     text-align:center; padding:20px; gap:20px;
@@ -393,6 +400,10 @@
     <form class="search-box" id="searchForm">
       <span style="color:var(--text-lo); font-size:13px;">⌕</span>
       <input type="text" id="searchInput" data-i18n-placeholder="searchPlaceholder" placeholder="Cari film atau series...">
+      <select id="searchTypeSelect" class="search-type-select">
+        <option value="movie" data-i18n="filterMovies">Film</option>
+        <option value="tv" data-i18n="filterSeries">Series</option>
+      </select>
     </form>
     <button class="icon-btn" id="langBtn" aria-label="Switch language" style="font-family:var(--font-mono); font-size:11px; font-weight:600;">ID</button>
   </nav>
@@ -789,6 +800,8 @@
     state.results = [];
     state.query = '';
     document.getElementById('searchInput').value = '';
+    const searchTypeSelect = document.getElementById('searchTypeSelect');
+    if(searchTypeSelect) searchTypeSelect.value = state.type;
 
     const hideRails = state.query || state.type === 'tv';
 
@@ -1034,9 +1047,12 @@
     e.preventDefault();
     const q = document.getElementById('searchInput').value.trim();
     if(!q) return;
+    const selectedType = document.getElementById('searchTypeSelect').value;
+    state.type = selectedType === 'tv' ? 'tv' : 'movie';
     state.query = q; state.page = 1; state.results = [];
     const railsSection = document.getElementById('popularRailsSection');
     if(railsSection) railsSection.style.display = 'none';
+    document.querySelectorAll('#typeSeg button').forEach(b => b.classList.toggle('active', b.dataset.val === state.type));
     if(!location.hash.startsWith('#/home')) location.hash = '#/home';
     loadResults(true);
   });
