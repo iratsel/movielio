@@ -334,9 +334,9 @@
   .play-hero .bg-shade{position:absolute; inset:0; background:linear-gradient(0deg, var(--bg) 0%, transparent 30%, rgba(7,8,10,0.3) 100%);}
   .play-hero iframe, .play-hero video{position:absolute; inset:0; width:100%; height:100%; border:none; z-index:2;}
   .yt-brand-cover{
-    position:absolute; bottom:20px; right:20px; z-index:3; pointer-events:none;
+    position:absolute; bottom:0px; right:20px; z-index:3; pointer-events:none;
     display:flex; align-items:center; gap:21px; padding:21px 36px; border-radius:999px;
-    background:rgba(7,8,10,0.72); backdrop-filter:blur(6px); border:1px solid var(--border);
+    background:#07080a; border:1px solid var(--border);
     font-family:var(--font-display); font-size:2.46rem; font-weight:600; color:var(--text-hi); letter-spacing:0.01em;
   }
   .yt-brand-cover .dot{width:18px; height:18px; border-radius:50%; background:var(--amber); box-shadow:0 0 24px var(--amber);}
@@ -449,7 +449,7 @@
   const TMDB_PROXY_URL = "";                 // e.g. "https://movielio-proxy.yourname.workers.dev" — leave empty to call TMDb directly (key exposed)
   const TMDB_API_KEY   = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1ODQ4NDhiODkyMWZlOGJlMjZjOTEwODczYjliMDVhOSIsIm5iZiI6MTM5MDc0NDkyMy4wLCJzdWIiOiI1MmU1MTU1YTE5YzI5NTQ1M2EwMGZkZWQiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.cv6omRfppAAoV4XRb9TdIe22Xg-3z2lrWwPUNp3nY3g"; // only used when TMDB_PROXY_URL is empty
   const AFFILIATE_LINK = "play.html";     // destination for the "Watch Full Movie" button
-
+  
   /* ---------------- Config ---------------- */
   const TMDB_IMG = "https://image.tmdb.org/t/p/";
   const TMDB_API = TMDB_PROXY_URL || "https://api.themoviedb.org/3";
@@ -1257,7 +1257,7 @@
       const playOverlay = document.getElementById('playOverlay');
       const affiliateOverlay = document.getElementById('affiliateOverlay');
       const playHero = document.getElementById('playHero');
-      const OPENING_CLIP_SECONDS = 20;
+      const OPENING_CLIP_SECONDS = 30;
       let clipTimer = null;
 
       function showAffiliateOverlay(){
